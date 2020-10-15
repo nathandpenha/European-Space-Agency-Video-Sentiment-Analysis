@@ -1,0 +1,2 @@
+- Related User Story: https://ooti-projects.win.tue.nl/gitlab/st-c2019/esa/video-sentimental-analysis/-/issues/8
+- Related Document: https://tuenl.sharepoint.com/:w:/r/sites/gad_cbo/JPC/MC/ESA%20PDEng%20ST%20Project/Process%20(Technical)/Deployment_Guideline.docx?d=wf5e7bad74e024433b5786997f32261eb&csf=1&web=1&e=WDC9X6
