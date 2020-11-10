@@ -12,3 +12,8 @@ This repository contains the following directories:
 * src/feature_extraction: in this directory, put the code used for feature extraction
 * src/modeling: here, put the code for designing, training, and evaluating models
 * testing: here, put the code used to test the intelligent solution to be deployed
+
+
+## For running pipeline scripts on pi:
+
+`python3 emotion_prediction_pi_camera.py -m /home/pi/esAProject/workspace/ir_model/MobileNetV2/MobileNetV2.xml -d MYRIAD`
