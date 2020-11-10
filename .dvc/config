@@ -1,0 +1,4 @@
+[core]
+    remote = production
+['remote "production"']
+    url = s3://esa-continuous-ml-video
