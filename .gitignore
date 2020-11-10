@@ -9,3 +9,5 @@ models/*
 bin/*
 lib/*
 pyvenv.cfg
+/prod_data
+/prod_models
