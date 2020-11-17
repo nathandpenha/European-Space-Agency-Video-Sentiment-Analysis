@@ -22,11 +22,11 @@ class IPreprocessing(ABC):
         pass
 
     @abstractmethod
-    def save_frames(self, frames_dict, output_path):
+    def save_frames(self, frame_dict, output_path):
         '''
         this is an abstract function
-        :param frames_dict: dictionary of frames with their filenames
-        :type frames_dict: dictionary
+        :param frame_dict: dictionary of frames with their filenames
+        :type frame_dict: dictionary
         :param output_path: a path to save the detected human faces
         :type output_path: String
         '''
