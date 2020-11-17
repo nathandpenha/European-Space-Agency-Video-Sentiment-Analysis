@@ -139,3 +139,4 @@ Werkzeug==1.0.1
 win-unicode-console==0.5
 wrapt==1.12.1
 zc.lockfile==2.0
+dlib==19.21.0
