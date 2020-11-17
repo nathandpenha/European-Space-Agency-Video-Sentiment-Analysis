@@ -1,6 +1,6 @@
 # Video To Frames Script
 ## Initial Setup 
-- Set the `input_path` variable to directory where the video are stored.
+
 - Set the `output_path` to directory where the frames will be stored.
 - Set the number of frames per second using the `frame_per_second` variable.
 
@@ -11,4 +11,4 @@
 
 ## How to run 
 
- - Run any script using `python <script_name>` 
+ - Run any script using `python frame_generator.py` 

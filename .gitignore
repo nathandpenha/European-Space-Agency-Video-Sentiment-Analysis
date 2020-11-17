@@ -11,3 +11,5 @@ lib/*
 pyvenv.cfg
 /prod_data
 /prod_models
+*.pyc
+*/*.pyc
