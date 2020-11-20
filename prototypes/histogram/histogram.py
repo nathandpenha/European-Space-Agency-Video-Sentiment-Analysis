@@ -44,5 +44,4 @@ def live_feed():
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-
-live_feed()
+live_feed("model_path")
