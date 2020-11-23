@@ -109,6 +109,7 @@ ruamel.yaml==0.16.12
 ruamel.yaml.clib==0.2.2
 s3transfer==0.3.3
 scikit-image==0.17.2
+scikit-learn==0.23.2
 scipy==1.5.2
 Send2Trash==1.5.0
 shortuuid==1.0.1
