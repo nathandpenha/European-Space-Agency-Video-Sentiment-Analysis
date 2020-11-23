@@ -10,7 +10,7 @@ import sys
 import os
 import glob
 import dlib
-from ipreprocessing import IPreprocessing
+from .ipreprocessing import IPreprocessing
 
 
 class FaceDetector(IPreprocessing):
@@ -66,7 +66,10 @@ class FaceDetector(IPreprocessing):
                         face_image = frame[top:bottom, left:right]
                         face_list.append(face_image)
             except:
-                print("can not detect human face: Either image does not have human face or image is corrupted")
+                if frame is None:
+                    print("Frame is empty!")
+                else:
+                    print("can not detect human face: Either image does not have human face or image is corrupted")
         return face_list
 
     def get_frames(self, frame_list):

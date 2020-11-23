@@ -5,31 +5,32 @@ Authors: Akram Shokri
 import cv2
 import dlib
 import os
-from ipreprocessing import IPreprocessing
-from frame_generator import FrameGenerator
+from .ipreprocessing import IPreprocessing
+from .frame_generator import FrameGenerator
 
 
 class FaceAlignment(IPreprocessing):
     """
     This class is for aligning faces inside frames so as the eyes are in one line and both parallel to the x-axis.
     """
+    def __init__(self):
+        self.__detector = dlib.get_frontal_face_detector()
+        self.__predictor = dlib.shape_predictor(
+            "../../models/shape_predictor_68_face_landmarks.dat")
+
     def get_frames(self, frame_list):
         """
         This method accepts a frame as input and align the face of the subject in that frame.
         It returns the result as a frame.
         :param frame_list: list of objects of type OpenCV frame
         """
-        detector = dlib.get_frontal_face_detector()
-        predictor = dlib.shape_predictor(
-            "../../models/shape_predictor_68_face_landmarks.dat")
-
         aligned_faces = []
         for frame in frame_list:
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            detections = detector(gray, 1)
+            detections = self.__detector(gray, 1)
             if len(detections) > 0 and frame is not None:
                 detected_face = detections[0]
-                img_shape = predictor(frame, detected_face)
+                img_shape = self.__predictor(frame, detected_face)
                 aligned_face = dlib.get_face_chip(frame, img_shape, size=frame.shape[0], padding=0.00)
                 aligned_faces.append(aligned_face)
         return aligned_faces

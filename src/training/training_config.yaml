@@ -1,0 +1,12 @@
+data_dir: path/to/videos/
+train_params:
+  epochs: 100
+  batch_size: 128
+  learning_rate: 0.001
+  num_classes: 8
+  image_size: 224
+  gray_color: True
+  num_frames_per_video : 6
+  frames_per_second : 12
+network_type: cnn
+model_dir: ../../models
