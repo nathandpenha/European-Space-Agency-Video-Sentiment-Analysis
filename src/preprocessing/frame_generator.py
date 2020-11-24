@@ -12,9 +12,13 @@ The script is configurable to indicate the number of frames per second that must
 """
 
 
-from .ipreprocessing import IPreprocessing
 import cv2
-import os
+import os, sys
+current_directory = os.getcwd()
+parent_directory = os.path.dirname(current_directory)
+grand_parent_directory = os.path.dirname(parent_directory)
+sys.path.insert(0, grand_parent_directory)
+from src.preprocessing.ipreprocessing import IPreprocessing
 
 class FrameGenerator(IPreprocessing):
     """
