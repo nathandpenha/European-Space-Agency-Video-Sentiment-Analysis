@@ -1,0 +1,12 @@
+data_input_path: "./videos/"
+data_output_path: "" 
+dataset_type: percentage # actor | percentage
+frame_per_second: 6
+depth: 12
+image_gray: False
+image_width: 32
+image_height: 32
+preprocessing: 
+- face_detector: true
+- face_alignment: true
+- spatial_normalization: false
