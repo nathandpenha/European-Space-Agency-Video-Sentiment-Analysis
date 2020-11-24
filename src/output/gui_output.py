@@ -33,3 +33,4 @@ class GUIOutput:
                 cv2.rectangle(image, (160, index * 40 + 20),
                                (160 + int(ir_result[index] * 100 * 1.5), (index + 1) * 40 + 4),
                                (0, 0, 0), -1)
+            cv2.imshow("Frame", image)

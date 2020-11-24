@@ -10,7 +10,11 @@ import sys
 import os
 import glob
 import dlib
-from .ipreprocessing import IPreprocessing
+current_directory = os.getcwd()
+parent_directory = os.path.dirname(current_directory)
+grand_parent_directory = os.path.dirname(parent_directory)
+sys.path.insert(0, grand_parent_directory)
+from src.preprocessing.ipreprocessing import IPreprocessing
 
 
 class FaceDetector(IPreprocessing):
@@ -36,40 +40,26 @@ class FaceDetector(IPreprocessing):
         """
         face_list = []
         for frame in frames:
-            try:
-                # detect human face using one of the five openCV libraries
-                faces = self.__face_cascade.detectMultiScale(frame, 1.2, 5)
-                if (len(faces) == 0 or len(faces) > 1):
-                    faces = self.__face_cascade1.detectMultiScale(frame, 1.1, 5, minSize=(30, 30))
-                    if (len(faces) == 0 or len(faces) > 1):
-                        faces = self.__face_cascade2.detectMultiScale(frame, 1.1, 5, minSize=(30, 30))
-                        if (len(faces) == 0 or len(faces) > 1):
-                            faces = self.__face_cascade3.detectMultiScale(frame, 1.1, 5, minSize=(30, 30))
-                            if (len(faces) == 0 or len(faces) > 1):
-                                faces = self.__face_cascade4.detectMultiScale(frame, 1.1, 5, minSize=(30, 30))
 
-                if (len(faces) == 1):
-                    # extract the detected face into new image
-                    for (x, y, w, h) in faces:
-                        face_image = frame[y:y + h, x:x + w]
-                        face_list.append(face_image)
-                else:
-                    # detect human face using dlib
-                    detections = self.__detector(frame, 1)
+            # detect human face using one of the five openCV libraries
+            face_image = self.get_frame(frame)
 
-                    if len(detections) > 0:
-                        d = detections[0]
-                        left = d.left()
-                        right = d.right()
-                        top = d.top()
-                        bottom = d.bottom()
-                        face_image = frame[top:bottom, left:right]
-                        face_list.append(face_image)
-            except:
-                if frame is None:
-                    print("Frame is empty!")
-                else:
-                    print("can not detect human face: Either image does not have human face or image is corrupted")
+            if face_image is not None and len(face_image) == 1:
+
+                face_list.append(face_image)
+            else:
+                # detect human face using dlib
+                detections = self.__detector(frame, 1)
+
+                if len(detections) > 0:
+                    d = detections[0]
+                    left = d.left()
+                    right = d.right()
+                    top = d.top()
+                    bottom = d.bottom()
+                    face_image = frame[top:bottom, left:right]
+                    face_list.append(face_image)
+
         return face_list
 
     def get_frames(self, frame_list):
@@ -81,6 +71,31 @@ class FaceDetector(IPreprocessing):
         :rtype: list
         """
         return self.__extract_face(frame_list)
+
+    def get_frame(self, frame):
+        """
+        This function returns a detected human faces
+        :param frame: image stored as type ndarray
+        :return: a detected human faces
+        :rtype: image of the detected face
+        """
+        face_image = None
+
+        face = self.__face_cascade.detectMultiScale(frame, 1.2, 5)
+        if len(face) == 0 or len(face) > 1:
+            face = self.__face_cascade1.detectMultiScale(frame, 1.1, 5, minSize=(30, 30))
+            if len(face) == 0 or len(face) > 1:
+                face = self.__face_cascade2.detectMultiScale(frame, 1.1, 5, minSize=(30, 30))
+                if len(face) == 0 or len(face) > 1:
+                    face = self.__face_cascade3.detectMultiScale(frame, 1.1, 5, minSize=(30, 30))
+                    if len(face) == 0 or len(face) > 1:
+                        face = self.__face_cascade4.detectMultiScale(frame, 1.1, 5, minSize=(30, 30))
+
+        for (x, y, w, h) in face:
+            # extract the detected face into new image
+            face_image = frame[y:y + h, x:x + w]
+
+        return face_image
 
     def save_frames(self, frame_dict, output_path):
         """

@@ -86,7 +86,14 @@ class Logger:
 
     def info(self, message):
         """
-        gets a Message and add it to log
+        gets a Message and add it as info to log
         :param message:
         """
         self.__app_log.info(message)
+
+    def error(self, message):
+        """
+        gets a Message and add it as error to log
+        :param message:
+        """
+        self.__app_log.error(message)
