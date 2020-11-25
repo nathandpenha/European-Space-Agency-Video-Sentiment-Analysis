@@ -1,37 +1,25 @@
 video:
 
-  training:
-    input_directory: "" # leave it blank if you do not have your dataset ready
-    output_directory: ""
-    frame_per_second: 6
-    model_type: CNN #CNN or CNN_RNN
-    model_input_shape:
-    - channels: 3
-    - height: 224
-    - width: 224
-    preprocessing:
-    - face_detector: true
-    - face_alignment: false
-    - subtraction: false
-
   prediction:
-    input_directory: 'D:\\Projects\\esA\\us10\\Dataset\\ravdess_videos\\train\\calm\\01-02-02-01-01-01-06.mp4'
+    input_directory: 'D:\Projects\esA\us10\Dataset\ravdess_videos\train\calm\01-02-02-01-01-01-06.mp4'
+    input_type: 'Camera' # Video or Camera
     frame_per_second: 6
-    mode: Record # RPi, Webcam (for demo), Record, Image (optional)
-    model_type: CNN #CNN or CNN_RNN
+    is_rpi_camera: False
+    model_type: CNN #CNN or 3d_CNN
+    model_format: IR #IR or h5
     model_directory: 'MobileNetV2.h5'
-    output_type:  # CMD, File
-    log_file_path: 'D:\\workspace\\video-sentimental-analysis\\src\\' # path/to/log/file
+    output_type:  # CMD, File or leave it empty to have both
+    log_file_path: 'D:\workspace\video-sentimental-analysis\src\'
     model_input_shape:
-    - channels: 3
-    - height: 224
-    - width: 224
+      - channels: 3
+      - height: 224
+      - width: 224
     preprocessing:
-    - face_detector: true
-    - face_alignment: false
-    - subtraction: false
+      - face_detector: true
+      - face_alignment: false
+      - subtraction: false
     ir_run:
       # "Required. Path to an .xml file with a trained model."
-      model: '/home/pi/esaProject/workspace/ir_model/MobileNetV2/MobileNetV2.xml'
+      model: 'D:\workspace\video-sentimental-analysis\src\Inference\MobileNetV2.xml'
       cpu_extension: # path to a shared library with the kernels implementations
-      device: 'MYRIAD' # target device to infer on (CPU, GPU, FPGA, HDDL, MYRIAD or HETERO)
+      device: 'CPU' # target device to infer on (CPU, GPU, FPGA, HDDL, MYRIAD or HETERO)
