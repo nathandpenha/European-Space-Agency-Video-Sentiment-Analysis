@@ -2,7 +2,7 @@ video:
 
   prediction:
     input_directory: 'D:\Projects\esA\us10\Dataset\ravdess_videos\train\calm\01-02-02-01-01-01-06.mp4'
-    input_type: 'Camera' # Video or Camera
+    input_type: 'Video' # Video or Camera
     frame_per_second: 6
     is_rpi_camera: False
     model_type: CNN #CNN or 3d_CNN
