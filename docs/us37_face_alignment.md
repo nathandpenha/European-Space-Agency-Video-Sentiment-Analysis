@@ -1,4 +1,4 @@
-## Face normalizer
+## Face alignment
 
 
 ### Dependency Installation
@@ -16,5 +16,5 @@
    this project
  - Modify the path to `shape_predictor_68_face_landmarks.dat` in the 
    script if needed
- - Run  `python face_normalizer.py` 
+ - Run `python face_alignment.py` 
  
