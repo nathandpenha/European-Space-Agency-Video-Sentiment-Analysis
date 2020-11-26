@@ -123,11 +123,11 @@ class Prediction:
 
     def __predict_emotion_video(self):
         video = cv2.VideoCapture(self.__prediction_conf['input_directory'])
-        faces = self.get_data_from_video_file(video)
+        faces = self.__get_data_from_video_file(video)
         for face in faces:
             self.__predict(face)
 
-    def get_data_from_video_file(self, file):
+    def __get_data_from_video_file(self, file):
         """
         This function gets file and returns frames with detected face
         :param file
