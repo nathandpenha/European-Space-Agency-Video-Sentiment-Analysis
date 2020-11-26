@@ -247,6 +247,44 @@ class Prediction:
             images[i] = image
         return images
 
+    def __optimized_model_execution_3d_CNN(self, face):
+        # normalized_face = self.get_data(image) - wrong method TODO: to test
+        if face is not None:
+            normalized_face = self.__normalizer.get_frame(face)
+            prepared_face_images = self.__prepare_image_3d_CNN(self.model, self.model_blob)
+            ir_result = self.model.infer(inputs={self.model_blob: prepared_face_images})
+            self.display_result(ir_result, face)
+        cv2.imshow("Frame", face)
+
+    def __prepare_image_3d_CNN(self, net, input_blob):
+        n, c, h, w, d = net.input_info[input_blob].input_data.shape
+        videos = np.ndarray(shape=(n, c, h, w, d))
+        for j in range(n):
+            cap = cv2.VideoCapture(args.input[j])  # reuse by video input param
+            nframe = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+            frames = [x * nframe / d for x in range(d)]
+            framearray = []
+            for i in range(d):
+                cap.set(cv2.CAP_PROP_POS_FRAMES, frames[i])
+                ret, frame = cap.read()
+                frame = self.__resize(frame, 0.3)
+                frame = spatial_normalization(frame)  # another module?
+                frame = cv2.resize(frame, (32, 32))
+                framearray.append(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY))
+            framearray = np.array(framearray)
+            framearray = np.repeat(framearray[..., np.newaxis], 1, -1)
+            framearray = framearray.transpose((3, 1, 2, 0))
+            framearray = framearray / 255.
+            videos[j] = framearray
+        return videos
+
+    def __resize(self, image, percent):
+        width = int(image.shape[1] * percent)
+        height = int(image.shape[0] * percent)
+        dsize = (width, height)
+        image = cv2.resize(image, dsize)
+        return image
+
     def display_result(self, result, image):
         """
         This function shows histogram for the rPI camera input and/or provide a command line/text file representation
