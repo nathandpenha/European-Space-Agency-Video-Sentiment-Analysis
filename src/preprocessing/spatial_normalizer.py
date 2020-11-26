@@ -21,7 +21,7 @@ class SpatialNormalization(IPreprocessing):
     def __init__(self):
         self.__detector = dlib.get_frontal_face_detector()
         self.__predictor = dlib.shape_predictor(
-            "/Users/Merka/programming/ESA-project/code/video-sentimental-analysis/models/shape_predictor_68_face_landmarks.dat")
+            "../../models/shape_predictor_68_face_landmarks.dat")
         self.__left_eye = np.array([36, 37, 38, 39, 40, 41])
         self.__right_eye = np.array([42, 43, 44, 45, 46, 47])
 
@@ -141,9 +141,9 @@ class SpatialNormalization(IPreprocessing):
 
 
 def main():
-    output_path = "/Users/Merka/programming/ESA-project/code/video-sentimental-analysis/src/preprocessing/output/"
+    output_path = "./output/"
     cap = cv2.VideoCapture(
-        "/Users/Merka/programming/ESA-project/code/video-sentimental-analysis/src/preprocessing/2.mp4")
+        "./2.mp4")
     fg = FrameGenerator(6)
     fg.save_frames({"video": cap}, output_path)
 
