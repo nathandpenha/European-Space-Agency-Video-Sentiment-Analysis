@@ -23,6 +23,7 @@ from src.output.gui_output import GUIOutput
 from src.preprocessing.face_extractor import FaceDetector
 from src.preprocessing.frame_generator import FrameGenerator
 from src.preprocessing.normalization import Normalization
+from src.preprocessing.spatial_normalization import SpatialNormalization
 
 
 class Prediction:
@@ -51,7 +52,9 @@ class Prediction:
         self.__frame_generator = FrameGenerator(self.__prediction_conf['frame_per_second'])
         self.__face_detector = FaceDetector()
         self.__normalizer = Normalization(False, self.__prediction_conf['model_input_shape'][1]['height'])
+        self.__spatial_normalization = SpatialNormalization()
 
+    #TODO: 3d_CNN.h5, 3d_CNN_optimized
     def load_model(self):
         """
         This function:
@@ -192,11 +195,14 @@ class Prediction:
         else:
             raise Exception("check input type and model format in configuration")
 
+    #TODO:
     def __predict(self, frame):
         if self.__prediction_conf['model_format'] == 'h5':
-            self.__h5_model_caller(frame)
+            #self.__h5_model_caller(frame)
+            self.__h5_model_caller_3d_CNN(frame)
         elif self.__prediction_conf['model_format'] == 'IR':
-            self.__optimized_model_caller(frame)
+            #self.__optimized_model_caller(frame)
+            self.__optimized_model_caller_3d_CNN(frame)
         else:
             raise ValueError("model format is not correct")
 
@@ -247,16 +253,66 @@ class Prediction:
             images[i] = image
         return images
 
-    def __optimized_model_execution_3d_CNN(self, face):
-        # normalized_face = self.get_data(image) - wrong method TODO: to test
-        if face is not None:
-            normalized_face = self.__normalizer.get_frame(face)
-            prepared_face_images = self.__prepare_image_3d_CNN(self.model, self.model_blob)
-            ir_result = self.model.infer(inputs={self.model_blob: prepared_face_images})
-            self.display_result(ir_result, face)
-        cv2.imshow("Frame", face)
+    def __h5_model_caller_3d_CNN(self, frame):
+        if self.__is_video_input():
+            self.__h5_model_executer_3d_CNN(frame, frame)
+        else:   #TODO:
+            face = self.__face_detector.get_frame(frame)
+            if face is not None:
+                normalized_face = self.__normalizer.get_frame(face)
+                self.__h5_model_executer(frame, normalized_face)
 
-    def __prepare_image_3d_CNN(self, net, input_blob):
+    def __h5_model_executer_3d_CNN(self, frame, normalized_face):
+        videos = self.__prepare_image_3d_CNN_h5(self.model, self.model_blob)
+        result = self.model.predict(videos)
+        #sort = np.argsort(-result[0])
+        self.display_result(result, frame)
+
+    def __prepare_image_3d_CNN_h5(self, net, input_blob):
+        n, c, h, w, d = net.input_info[input_blob].input_data.shape
+        videos = np.ndarray(shape=(n, c, h, w, d))
+        cap = cv2.VideoCapture(self.__prediction_conf['input_directory'])
+        nframe = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+        frames = [x * nframe / d for x in range(d)]
+        framearray = []
+        for i in range(d):
+            cap.set(cv2.CAP_PROP_POS_FRAMES, frames[i])
+            ret, frame = cap.read()
+            frame = self.__resize(frame, 0.3)
+            frame = self.__spatial_normalization.get_frames(frame)
+            frame = cv2.resize(frame, (32, 32))
+            framearray.append(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY))
+        framearray = np.array(framearray)
+        framearray = np.repeat(framearray[..., np.newaxis], 1, -1)
+        framearray = framearray.transpose((3, 1, 2, 0))
+        framearray = framearray / 255.  # .astype('float32')
+        videos[0] = framearray
+        videos = videos.reshape((videos.shape[0], h, w, d, c))
+        return videos
+
+    def __optimized_model_caller_3d_CNN(self, frame):
+        if self.__is_video_input():
+            self.__optimized_model_executer_3d_CNN(frame, frame)
+        else:   #TODO:
+            face = self.get_data_from_camera(frame)
+            if face is not None:
+                normalized_face = self.__normalizer.get_frame(face)
+                self.__optimized_model_executer(frame, normalized_face)
+            cv2.imshow("Frame", frame)
+
+    def __optimized_model_executer_3d_CNN(self, frame, normalized_face):
+        videos = self.__prepare_image_3d_CNN_IR(self.model, self.model_blob)
+        result = self.model.predict(videos)
+        #sort = np.argsort(-result[0])
+
+        self.display_result(result, frame)
+        prepared_face_image = self.__prepare_image(normalized_face,
+                                                   self.model,
+                                                   self.model_blob)
+        ir_result = self.model.infer(inputs={self.model_blob: prepared_face_image})
+        self.display_result(ir_result, frame)
+
+    def __prepare_image_3d_CNN_IR(self, net, input_blob):
         n, c, h, w, d = net.input_info[input_blob].input_data.shape
         videos = np.ndarray(shape=(n, c, h, w, d))
         for j in range(n):
