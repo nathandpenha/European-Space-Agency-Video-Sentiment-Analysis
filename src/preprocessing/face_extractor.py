@@ -24,11 +24,11 @@ class FaceDetector(IPreprocessing):
 
     def __init__(self):
         self.__detector = dlib.get_frontal_face_detector()
-        self.__face_cascade = cv2.CascadeClassifier('D:\\workspace\\video-sentimental-analysis\\src\\preprocessing\\haarcascade_frontalface_alt.xml')
-        self.__face_cascade1 = cv2.CascadeClassifier('D:\\workspace\\video-sentimental-analysis\\src\\preprocessing\\haarcascade_frontalface_alt2.xml')
-        self.__face_cascade2 = cv2.CascadeClassifier('D:\\workspace\\video-sentimental-analysis\\src\\preprocessing\\haarcascade_frontalface_alt_tree.xml')
-        self.__face_cascade3 = cv2.CascadeClassifier('D:\\workspace\\video-sentimental-analysis\\src\\preprocessing\\haarcascade_profileface.xml')
-        self.__face_cascade4 = cv2.CascadeClassifier('D:\\workspace\\video-sentimental-analysis\\src\\preprocessing\\haarcascade_frontalface_default.xml')
+        self.__face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_alt.xml')
+        self.__face_cascade1 = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_alt2.xml')
+        self.__face_cascade2 = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_alt_tree.xml')
+        self.__face_cascade3 = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_profileface.xml')
+        self.__face_cascade4 = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
     def __extract_face(self, frames):
         """
