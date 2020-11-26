@@ -11,14 +11,15 @@ The script is able to store the extracted image frames in memory (in a list).
 The script is configurable to indicate the number of frames per second that must be extracted
 """
 
-
 import cv2
 import os, sys
+
 current_directory = os.getcwd()
 parent_directory = os.path.dirname(current_directory)
 grand_parent_directory = os.path.dirname(parent_directory)
 sys.path.insert(0, grand_parent_directory)
 from src.preprocessing.ipreprocessing import IPreprocessing
+
 
 class FrameGenerator(IPreprocessing):
     """
@@ -36,12 +37,12 @@ class FrameGenerator(IPreprocessing):
         :param video:  video object of type cv2.VideoCapture.
         :return frames: list of frames based on the __frame_per_second parameter.
         """
-        video_fps = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+        video_fps = int(video.get(cv2.CAP_PROP_FRAME_COUNT)) if int(video.get(cv2.CAP_PROP_FRAME_COUNT)) > 0 else 7
         frame_counter = 0
         frames = []
         for i in range(0, video_fps):
             ret, frame = video.read()
-            if(frame_counter % self.__frame_per_second == 0):
+            if (frame_counter % self.__frame_per_second == 0):
                 frames.append(frame)
             frame_counter += 1
         return frames
@@ -63,7 +64,7 @@ class FrameGenerator(IPreprocessing):
             frame_array.append(frame)
         return frame_array
 
-    def save_frames(self, frame_dict, output_path, number_of_frames = None):
+    def save_frames(self, frame_dict, output_path, number_of_frames=None):
         """
         This function accepts a dictionary of videos with their names and
         extracts and saves frames on the disk.
@@ -81,8 +82,10 @@ class FrameGenerator(IPreprocessing):
                 frames = self.get_frames(video)
             for i in range(0, len(frames)):
                 if frames[i] is not None:
-                    cv2.imwrite(output_path+"/"+filename+"-"+str(i)+".jpg",
+                    cv2.imwrite(output_path + "/" + filename + "-" + str(i) + ".jpg",
                                 frames[i])
+
+
 def main():
     fg = FrameGenerator(6)
     cap = cv2.VideoCapture("1.mp4")
@@ -92,7 +95,8 @@ def main():
     cap = cv2.VideoCapture("2.mp4")
     frames = fg.get_equal_frames(cap, 10)
     print(frames.__len__())
-    fg.save_frames({"video1":cap},"./output/", 10)
+    fg.save_frames({"video1": cap}, "./output/", 10)
+
 
 if __name__ == "__main__":
     main()
