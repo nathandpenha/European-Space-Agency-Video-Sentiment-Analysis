@@ -1,0 +1,21 @@
+model_type : 3d_cnn  # cnn or 3d_cnn
+train_params:
+  data_input_path: ../../data/processed
+  model_builder: ThreeDCNNV1  # type of model instance, possible values: MobileNet, ThreeDCNNV1
+  model_output_path: ../../models # path to save a trained model
+  trained_model_name: ""  # a filename for the trained model
+  model_input_path: ""  # absolute folder path to a trained model
+  optimized_output_path: "" # absolute folder path to save the optimized model
+  openvino_inst_dir: "" # absolute path to bin folder  of openvino installation
+  openvino_optimizer_dir: "" # absolute path to model_optimizer folder  of openvino installation
+  epochs: 1
+  batch_size: 128
+  learning_rate: 0.001
+  num_classes: 5
+  n_conv_filters: [32, 64]
+  kernel_size: [3, 3, 3]
+  model_input_shape: [32, 32, 1]
+  gray_color: True
+  depth : 12
+  frames_per_second : 12
+
