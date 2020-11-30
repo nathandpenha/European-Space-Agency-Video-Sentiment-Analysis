@@ -112,22 +112,27 @@ class DataPreparation:
         """
         data_output_path = parameters["data_output_path"]
         num_classes = parameters["num_classes"]
+        channel = parameters["channel"]
         if dataset_type == "percentage":
             data, labels = self.get_training_data(parameters)
-            data = data.reshape((data.shape[0], data.shape[1], data.shape[2],
-                                 data.shape[3], parameters["channel"]))
-            labels = to_categorical(labels, num_classes)
             x_train, x_test, y_train, y_test = train_test_split(data, labels, test_size=0.10,
                                                                 random_state=42, stratify=labels)
             x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.111,
                                                               random_state=42, stratify=y_train)
         elif dataset_type == "actor":
             x_train, x_val, x_test, y_train, y_val, y_test = self.get_training_data(parameters)
-            y_train = to_categorical(y_train, num_classes)
-            y_val = to_categorical(y_val, num_classes)
-            y_test = to_categorical(y_test, num_classes)
+
         else:
             raise ValueError("wrong input type{}".format(dataset_type))
+        x_train = x_train.reshape((x_train.shape[0], x_train.shape[1], x_train.shape[2],
+                                   x_train.shape[3], channel))
+        x_val = x_val.reshape((x_val.shape[0], x_val.shape[1], x_val.shape[2],
+                               x_val.shape[3], channel))
+        x_test = x_test.reshape((x_test.shape[0], x_test.shape[1], x_test.shape[2],
+                                 x_test.shape[3], channel))
+        y_train = to_categorical(y_train, num_classes)
+        y_val = to_categorical(y_val, num_classes)
+        y_test = to_categorical(y_test, num_classes)
 
         if not os.path.exists(data_output_path):
             print("directory {} does not exists.".format(data_output_path))
