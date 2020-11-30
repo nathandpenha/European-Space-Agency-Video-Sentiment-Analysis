@@ -46,7 +46,7 @@ class Logger:
         self.__stream_handler.setLevel(log.INFO)
         # File to log to
         if self.__prediction_conf['output_type'] != 'CMD':
-            log_file = self.__prediction_conf['log_file_path'] + "log.log"
+            log_file = self.__prediction_conf['log_directory_path'] + "log.log"
             # Setup File handler
             self.__file_handler = log.FileHandler(log_file)
             self.__file_handler.setFormatter(log_formatter)
