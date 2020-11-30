@@ -1,0 +1,23 @@
+dataset_type: actor # possible values: actor | percentage
+data_parameters: # the system should be able to enable or disable the preprocessing process. the order of the preprocessing is also taken into account.
+  preprocessing:
+    face_detector: False
+    face_alignment: False
+    spatial_normalization: True
+  data_input_path: "" #  folder path for raw dataset
+  data_output_path: ../../data/processed #   path to save the preprocessed data
+  frame_per_second: 6 # frames per second for generating the frames from video
+  depth: 12 # how many frames that will be generated per video
+  num_classes: 5
+  image_size: 32
+  gray_color: True
+  channel: 1
+  emotion:
+    "01": True # neutral
+    "02": False # calm
+    "03": True # happy
+    "04": True # sad
+    "05": True # angry
+    "06": True # fearful
+    "07": False # disgusted
+    "08": False # surprised
