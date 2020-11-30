@@ -11,14 +11,15 @@ The script is able to store the extracted image frames in memory (in a list).
 The script is configurable to indicate the number of frames per second that must be extracted
 """
 
-
 import cv2
 import os, sys
+
 current_directory = os.getcwd()
 parent_directory = os.path.dirname(current_directory)
 grand_parent_directory = os.path.dirname(parent_directory)
 sys.path.insert(0, grand_parent_directory)
 from src.preprocessing.ipreprocessing import IPreprocessing
+
 
 class FrameGenerator(IPreprocessing):
     """
@@ -26,22 +27,25 @@ class FrameGenerator(IPreprocessing):
     """
 
     __frame_per_second = None
+    __CAP_PROP_FRAME_COUNT = 7
 
     def __init__(self, frame_per_second):
         self.__frame_per_second = frame_per_second
 
     def get_frames(self, video):
         """
-        This function returns a list of frames from a video
+        This function returns a list of frames from a video.
+        __CAP_PROP_FRAME_COUNT constant was reassigned locally due to inaccessibility of
+        several internal cv2 files from rPI.
         :param video:  video object of type cv2.VideoCapture.
         :return frames: list of frames based on the __frame_per_second parameter.
         """
-        video_fps = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+        video_fps = int(video.get(self.__CAP_PROP_FRAME_COUNT))
         frame_counter = 0
         frames = []
         for i in range(0, video_fps):
             ret, frame = video.read()
-            if(frame_counter % self.__frame_per_second == 0):
+            if (frame_counter % self.__frame_per_second == 0):
                 frames.append(frame)
             frame_counter += 1
         return frames
@@ -49,12 +53,14 @@ class FrameGenerator(IPreprocessing):
     def get_equal_frames(self, video, number_of_frames):
         """
         This function returns a list of frames from a video.
-        Number of the returned frames will be equal to number_of_frames
+        Number of the returned frames will be equal to number_of_frames.
+        __CAP_PROP_FRAME_COUNT constant was reassigned locally due to inaccessibility of
+        several internal cv2 files from rPI.
         :param video:  video object of type cv2.VideoCapture.
         :param number_of_frames: an integer identifying number frames to extract
         :return frames: list of frames based on the number_of_frames parameter.
         """
-        nframe = video.get(cv2.CAP_PROP_FRAME_COUNT)
+        nframe = video.get(self.__CAP_PROP_FRAME_COUNT)
         frames = [x * nframe / number_of_frames for x in range(number_of_frames)]
         frame_array = []
         for i in range(number_of_frames):
@@ -63,7 +69,7 @@ class FrameGenerator(IPreprocessing):
             frame_array.append(frame)
         return frame_array
 
-    def save_frames(self, frame_dict, output_path, number_of_frames = None):
+    def save_frames(self, frame_dict, output_path, number_of_frames=None):
         """
         This function accepts a dictionary of videos with their names and
         extracts and saves frames on the disk.
@@ -71,6 +77,8 @@ class FrameGenerator(IPreprocessing):
         and video objects of type cv2.VideoCapture.
         :param output_path: A path to save the generated frames
         for each video.
+        :param number_of_frames: an integer identifying number frames to extract.
+        None by default.
         """
         if not os.path.exists(output_path):
             os.makedirs(output_path)
@@ -81,8 +89,10 @@ class FrameGenerator(IPreprocessing):
                 frames = self.get_frames(video)
             for i in range(0, len(frames)):
                 if frames[i] is not None:
-                    cv2.imwrite(output_path+"/"+filename+"-"+str(i)+".jpg",
+                    cv2.imwrite(output_path + "/" + filename + "-" + str(i) + ".jpg",
                                 frames[i])
+
+
 def main():
     fg = FrameGenerator(6)
     cap = cv2.VideoCapture("1.mp4")
@@ -92,7 +102,8 @@ def main():
     cap = cv2.VideoCapture("2.mp4")
     frames = fg.get_equal_frames(cap, 10)
     print(frames.__len__())
-    fg.save_frames({"video1":cap},"./output/", 10)
+    fg.save_frames({"video1": cap}, "./output/", 10)
+
 
 if __name__ == "__main__":
     main()
