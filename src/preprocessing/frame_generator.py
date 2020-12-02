@@ -47,16 +47,34 @@ class FrameGenerator(IPreprocessing):
             frame_counter += 1
         return frames
 
+    def __count_frames_manual(self, video):
+        # initialize the total number of frames read
+        total = 0
+        # loop over the frames of the video
+        while True:
+            # grab the current frame
+            (grabbed, frame) = video.read()
+            # check to see if we have reached the end of the
+            # video
+            if not grabbed:
+                break
+            # increment the total number of frames read
+            total += 1
+        # return the total number of frames in the video file
+        return total
+
     def get_equal_frames(self, video, number_of_frames):
         """
         This function returns a list of frames from a video.
         Number of the returned frames will be equal to number_of_frames
+
         :param video:  video object of type cv2.VideoCapture.
         :param number_of_frames: an integer identifying number frames to extract
         :return frames: list of frames based on the number_of_frames parameter.
         """
-        nframe = video.get(cv2.CAP_PROP_FRAME_COUNT)
-        frames = [x * nframe / number_of_frames for x in range(number_of_frames)]
+        n_frame = int(video.get(cv2.CAP_PROP_FRAME_COUNT)) if int(
+                video.get(cv2.CAP_PROP_FRAME_COUNT)) > 0 else self.__count_frames_manual(video)
+        frames = [x * n_frame / number_of_frames for x in range(number_of_frames)]
         frame_array = []
         for i in range(number_of_frames):
             video.set(cv2.CAP_PROP_POS_FRAMES, frames[i])

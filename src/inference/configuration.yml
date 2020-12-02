@@ -1,0 +1,29 @@
+video:
+
+  prediction:
+    input_directory: 'D:\workspace\video-sentimental-analysis\src\inference\sam-happy.mp4'
+    input_type: Camera # Video or Camera
+    frame_per_second: 6
+    is_rpi_camera: False
+    model_type: 3d_CNN #CNN or 3d_CNN
+    model_format: h5 #IR or h5
+    model_directory: 'D:\workspace\video-sentimental-analysis\src\inference\3d_cnn_candidate_model.h5'
+    output_type: CMD # CMD, File or leave it empty to have both
+    log_directory_path: 'D:\workspace\video-sentimental-analysis\src\'
+    model_input_shape:
+      - channels: 1
+      - height: 32
+      - width: 32
+    camera:
+      CAP_PROP_FRAME_WIDTH: 640 # webcame and rpi respectively 1680, 640
+      CAP_PROP_FRAME_HEIGHT: 480 # webcame and rpi respectively 1220, 480
+    preprocessing:
+      face_detector: False
+      face_alignment: False
+      spatial_normalization: True
+    gray_color: True
+    ir_run:
+      # "Required. Path to an .xml file with a trained model."
+      model: 'D:\workspace\video-sentimental-analysis\src\inference\3d_cnn_candidate_model.xml'
+      cpu_extension: # path to a shared library with the kernels implementations
+      device: 'CPU' # target device to infer on (CPU, GPU, FPGA, HDDL, MYRIAD or HETERO)

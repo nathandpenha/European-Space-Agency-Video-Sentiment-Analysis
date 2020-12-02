@@ -9,8 +9,8 @@ import os
 import math
 import imutils
 import numpy as np
-from ipreprocessing import IPreprocessing
-from frame_generator import FrameGenerator
+from src.preprocessing.ipreprocessing import IPreprocessing
+from src.preprocessing.frame_generator import FrameGenerator
 
 
 class SpatialNormalization(IPreprocessing):
@@ -33,7 +33,7 @@ class SpatialNormalization(IPreprocessing):
         """
         spatial_normalized_frames = []
         for frame in frame_list:
-            spatial_normalized_frames.append(self.__do_spatial_normalization(frame))
+            spatial_normalized_frames.append(self.get_frame(frame))
         return spatial_normalized_frames
 
     def save_frames(self, frame_dict, output_path):
@@ -58,7 +58,7 @@ class SpatialNormalization(IPreprocessing):
                 cv2.imwrite(output_path + "/" + images_file_name[i].replace(".jpg", "") + "_spn.jpg",
                             normalized_frames[i])
 
-    def __do_spatial_normalization(self, image):
+    def get_frame(self, image):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         detections = self.__detector(gray, 1)
 

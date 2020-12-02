@@ -14,7 +14,7 @@ current_directory = os.getcwd()
 parent_directory = os.path.dirname(current_directory)
 grand_parent_directory = os.path.dirname(parent_directory)
 sys.path.insert(0, grand_parent_directory)
-from src.configuration_manager import ConfigurationManager
+from src.inference.configuration_manager import ConfigurationManager
 
 
 class Logger:
@@ -37,8 +37,8 @@ class Logger:
         # Get our logger
         self.__app_log = log.getLogger('root')
         self.__app_log.setLevel(log.INFO)
-        log_formatter = log.Formatter('%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s',
-                                       datefmt='%d/%m/%Y %H:%M:%S')
+        log_formatter = log.Formatter('%(message)s') # '%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) ,
+                                       # datefmt='%d/%m/%Y %H:%M:%S'
 
         # Setup Stream Handler (i.e. console)
         self.__stream_handler = log.StreamHandler()
@@ -46,7 +46,7 @@ class Logger:
         self.__stream_handler.setLevel(log.INFO)
         # File to log to
         if self.__prediction_conf['output_type'] != 'CMD':
-            log_file = self.__prediction_conf['log_file_path'] + "log.log"
+            log_file = self.__prediction_conf['log_directory_path'] + "log.log"
             # Setup File handler
             self.__file_handler = log.FileHandler(log_file)
             self.__file_handler.setFormatter(log_formatter)
@@ -76,13 +76,23 @@ class Logger:
         self.__app_log.info("")
 
     def __logs_cmd(self, result):
-        max_result = result.max()
-        max_position = result.argmax()
-        # Add the Handler
         self.__app_log.addHandler(self.__stream_handler)
-        self.__app_log.info("Emotion distribution set: {}".format(str(result)))
+        Emotion = {0: "Neutral",
+                   1: "Happy",
+                   2: "Sad",
+                   3: "Angry",
+                   4: "Fearful"}
+        max_position = result.argmax()
+        self.__app_log.info("\n\t ==== Video model prediction result ====\n")
+        self.__app_log.info("\t Emotion \t Probability")
+        for i in range(5):
+            if i == 2:
+                self.__app_log.info("\t {} : \t \t {}".format(str(Emotion[i]), str(result[i])))
+            else:
+                self.__app_log.info("\t {} : \t {}".format(str(Emotion[i]), str(result[i])))
         self.__app_log.info(
-            "Detected emotion category : {} probability: {}".format(str(max_position), str(max_result)))
+            "\n\t Detected emotion : {}, probability: {}".format(str(Emotion[max_position]), str((result[max_position]))))
+
 
     def info(self, message):
         """
