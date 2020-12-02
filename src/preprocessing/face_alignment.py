@@ -1,10 +1,13 @@
 """
-Date : 19 November 2020
-Authors: Akram Shokri
+Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
+@ Authors: Akram Shokri a.shokri@tue.nl
+@ Contributors: Yusril Maulidan Raji y.m.raji@tue.nl
+Last modified date: 01-12-2020
 """
 import cv2
 import dlib
 import os
+from .utility import Utility
 from .ipreprocessing import IPreprocessing
 from .frame_generator import FrameGenerator
 
@@ -13,6 +16,7 @@ class FaceAlignment(IPreprocessing):
     """
     This class is for aligning faces inside frames so as the eyes are in one line and both parallel to the x-axis.
     """
+
     def __init__(self):
         self.__detector = dlib.get_frontal_face_detector()
         self.__predictor = dlib.shape_predictor(
@@ -26,6 +30,12 @@ class FaceAlignment(IPreprocessing):
         """
         aligned_faces = []
         for frame in frame_list:
+            # resize image to decrease the alignment execution time.
+            img_height = frame.shape[0]
+            resize_percent = Utility.calculate_resize_percent(img_height)
+            if resize_percent < 1:
+                frame = Utility.resize_image(frame, resize_percent)
+
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             detections = self.__detector(gray, 1)
             if len(detections) > 0 and frame is not None:
