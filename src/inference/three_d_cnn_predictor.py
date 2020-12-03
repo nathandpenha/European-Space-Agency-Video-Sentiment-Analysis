@@ -224,17 +224,17 @@ class ThreeDPrediction:
         if not self.__is_video_input():
             if self.__prediction_conf['model_format'] == 'h5':
                 self.__gui_output.draw_histogram(result[0], image)
-                # self.__logger.logs(result[0])
             if self.__prediction_conf['model_format'] == 'IR':
                 for key, probes in result.items():
                     ir_result = probes[0]
                     self.__gui_output.draw_histogram(ir_result, image)
-                    # self.__logger.logs(ir_result)
         elif self.__is_video_input():
             if self.__prediction_conf['model_format'] == 'h5':
                 self.__logger.logs(result[0])
             if self.__prediction_conf['model_format'] == 'IR':
-                self.__logger.logs(list(result.values())[0])
+                for key, probes in result.items():
+                    ir_result = probes[0]
+                    self.__logger.logs(ir_result)
 
 
 if __name__ == '__main__':

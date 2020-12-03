@@ -10,6 +10,8 @@ The script is able to print output in a file or in command line.
 
 import logging as log
 import os, sys
+from colorlog import ColoredFormatter
+
 current_directory = os.getcwd()
 parent_directory = os.path.dirname(current_directory)
 grand_parent_directory = os.path.dirname(parent_directory)
@@ -21,10 +23,15 @@ class Logger:
     """
     This class manages logs in console, file, or both
     """
-    
+
     __app_log = None
     __stream_handler = None
     __file_handler = None
+    Emotion = {0: "Neutral",
+               1: "Happy",
+               2: "Sad",
+               3: "Angry",
+               4: "Fearful"}
 
     def __init__(self):
         configuration_manager = ConfigurationManager("configuration.yml")
@@ -37,8 +44,15 @@ class Logger:
         # Get our logger
         self.__app_log = log.getLogger('root')
         self.__app_log.setLevel(log.INFO)
-        log_formatter = log.Formatter('%(message)s') # '%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) ,
-                                       # datefmt='%d/%m/%Y %H:%M:%S'
+        LOGFORMAT = "  %(message)s%(reset)s"  # %(log_color)s%(levelname)-8s%(reset)s |
+
+        cformat = '%(log_color)s' + LOGFORMAT
+        colors = {'DEBUG': 'green',
+                  'INFO': 'bold_cyan',
+                  'WARNING': 'bold_yellow',
+                  'ERROR': 'bold_red',
+                  'CRITICAL': 'bold_blue'}
+        log_formatter = ColoredFormatter(cformat, log_colors=colors)
 
         # Setup Stream Handler (i.e. console)
         self.__stream_handler = log.StreamHandler()
@@ -67,32 +81,27 @@ class Logger:
             self.__logs_file(result)
 
     def __logs_file(self, result):
-        max_result = result.max()
         max_position = result.argmax()
         self.__app_log.addHandler(self.__file_handler)
-        self.__app_log.info("Emotion distribution set: {}".format(str(result)))
-        self.__app_log.info(
-            "Detected emotion category : {} probability: {}".format(str(max_position), str(max_result)))
-        self.__app_log.info("")
-
-    def __logs_cmd(self, result):
-        self.__app_log.addHandler(self.__stream_handler)
-        Emotion = {0: "Neutral",
-                   1: "Happy",
-                   2: "Sad",
-                   3: "Angry",
-                   4: "Fearful"}
-        max_position = result.argmax()
         self.__app_log.info("\n\t ==== Video model prediction result ====\n")
         self.__app_log.info("\t Emotion \t Probability")
         for i in range(5):
-            if i == 2:
-                self.__app_log.info("\t {} : \t \t {}".format(str(Emotion[i]), str(result[i])))
-            else:
-                self.__app_log.info("\t {} : \t {}".format(str(Emotion[i]), str(result[i])))
-        self.__app_log.info(
-            "\n\t Detected emotion : {}, probability: {}".format(str(Emotion[max_position]), str((result[max_position]))))
+            self.__app_log.info("\t {} : \t {}".format(str(self.Emotion[i]).ljust(7), str(result[i])))
+        self.__app_log.critical(
+            "\n\t Detected emotion : {}, probability: {}".format(str(self.Emotion[max_position]),
+                                                                 str((result[max_position]))))
+        self.__app_log.debug("Inserted...")
 
+    def __logs_cmd(self, result):
+        max_position = result.argmax()
+        self.__app_log.addHandler(self.__stream_handler)
+        self.__app_log.info("\n\t ==== Video model prediction result ====\n")
+        self.__app_log.info("\t Emotion \t Probability")
+        for i in range(5):
+            self.__app_log.info("\t {} : \t {}".format(str(self.Emotion[i]).ljust(7), str(result[i])))
+        self.__app_log.critical(
+            "\n\t Detected emotion : {}, probability: {}".format(str(self.Emotion[max_position]),
+                                                                 str((result[max_position]))))
 
     def info(self, message):
         """

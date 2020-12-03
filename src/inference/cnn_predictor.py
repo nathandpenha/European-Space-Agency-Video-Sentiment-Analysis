@@ -1,12 +1,10 @@
 """
-Date: 19 November 2020
+Date: 26 November 2020
 Authors: Vladimir Romashov, Hossein Mahdian
 
-This is a Inference module script that is able to detect emotion from camera stream or input video.
+This is a Inference module script that is able to detect emotion by CNN models from camera stream or input video.
 
 It uses preprocessing module to prepare date for detection models. Also it uses Output module to display the results.
-
-The script is configurable with yaml configuration file
 """
 import os
 import sys
@@ -20,6 +18,8 @@ parent_directory = os.path.dirname(current_directory)
 grand_parent_directory = os.path.dirname(parent_directory)
 sys.path.insert(0, grand_parent_directory)
 from src.preprocessing.face_extractor import FaceDetector
+from src.preprocessing.face_alignment import FaceAlignment
+from src.preprocessing.spatial_normalizer import SpatialNormalization
 from src.preprocessing.frame_generator import FrameGenerator
 from src.preprocessing.normalization import Normalization
 from src.output.logger import Logger
@@ -41,7 +41,10 @@ class CNNPrediction:
         self.__prediction_conf = predict_conf
         self.__frame_generator = FrameGenerator(self.__prediction_conf['frame_per_second'])
         self.__face_detector = FaceDetector()
-        self.__normalizer = Normalization(False, self.__prediction_conf['model_input_shape'][1]['height'])
+        self.__face_alignment = FaceAlignment()
+        self.__spatial_normalizer = SpatialNormalization()
+        self.__normalizer = Normalization(self.__prediction_conf['gray_color'],
+                                          self.__prediction_conf['model_input_shape'][1]['height'])
         self.__logger = Logger()
         self.__gui_output = GUIOutput()
         self.load_model()
@@ -82,10 +85,10 @@ class CNNPrediction:
                     "Please try to specify cpu extensions library path in sample's command line parameters using -l "
                     "or --cpu_extension command line argument")
                 sys.exit(1)
-        input_blob = next(iter(net.input_info))
+        model_blob = next(iter(net.input_info))
         self.__logger.info("Loading model to the plugin")
         exec_net = ie.load_network(network=net, device_name=ir_run_conf['device'])
-        return exec_net, input_blob
+        return exec_net, model_blob
 
     def predict_emotion(self):
         """
@@ -94,10 +97,7 @@ class CNNPrediction:
         if self.__is_video_input():
             self.__predict_emotion_video()
         else:
-            if self.__prediction_conf['is_rpi_camera']:
-                self.__predict_emotion_rpi_camera()
-            else:
-                self.__predict_emotion_webcam()
+            self.__predict_emotion_webcam()
 
     def __is_video_input(self):
         """
@@ -117,41 +117,14 @@ class CNNPrediction:
         for face in faces:
             self.__predict(face)
 
-    def __predict_emotion_rpi_camera(self):
-        # initialize the camera and grab a reference to the raw camera capture
-        camera, rawCapture = self.__get_rPI_cam_input()
-        # capture frames from the camera
-        for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-            # grab the raw NumPy array representing the image, then initialize the timestamp
-            # and occupied/unoccupied text
-            image = frame.array
-            self.__predict(image)
-            rawCapture.truncate(0)
-            key = cv2.waitKey(1) & 0xFF
-            # clear the stream in preparation for the next frame
-            rawCapture.truncate(0)
-            # if the `q` key was pressed, break from the loop
-            if key == ord("q"):
-                break
-
-    def __get_rPI_cam_input(self):
-        from picamera.array import PiRGBArray
-        from picamera import PiCamera
-        # initialize the camera and grab a reference to the raw camera capture
-        camera = PiCamera()
-        camera.resolution = (640, 480)
-        camera.framerate = 32
-        rawCapture = PiRGBArray(camera, size=(640, 480))
-        return camera, rawCapture
-
     def __predict_emotion_webcam(self):
-        video_captor = cv2.VideoCapture(0)
-        video_captor.set(cv2.CAP_PROP_FRAME_WIDTH, 1680)
-        video_captor.set(cv2.CAP_PROP_FRAME_HEIGHT, 1220)
+        camera_stream = cv2.VideoCapture(0)
+        camera_stream.set(cv2.CAP_PROP_FRAME_WIDTH, self.__prediction_conf['camera']['CAP_PROP_FRAME_WIDTH'])
+        camera_stream.set(cv2.CAP_PROP_FRAME_HEIGHT, self.__prediction_conf['camera']['CAP_PROP_FRAME_HEIGHT'])
         timer = 19
         while True:
             timer = timer + 1
-            ret, frame = video_captor.read()
+            ret, frame = camera_stream.read()
             if timer % self.__prediction_conf['frame_per_second'] == 0:
                 self.__predict(frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -169,9 +142,8 @@ class CNNPrediction:
         if self.__is_video_input():
             self.__h5_model_executer(frame, frame)
         else:
-            face = self.__face_detector.get_frame(frame)
-            if face is not None:
-                normalized_face = self.__normalizer.get_frame(face)
+            normalized_face = self.__get_data_from_camera(frame)
+            if normalized_face is not None:
                 self.__h5_model_executer(frame, normalized_face)
 
     def __h5_model_executer(self, frame, normalized_face):
@@ -188,21 +160,18 @@ class CNNPrediction:
         if self.__is_video_input():
             self.__optimized_model_executer(frame, frame)
         else:
-            face = self.get_data_from_camera(frame)
-            if face is not None:
-                normalized_face = self.__normalizer.get_frame(face)
+            normalized_face = self.__get_data_from_camera(frame)
+            if normalized_face is not None:
                 self.__optimized_model_executer(frame, normalized_face)
             cv2.imshow("Frame", frame)
 
     def __optimized_model_executer(self, frame, normalized_face):
-        prepared_face_image = self.__prepare_image(normalized_face,
-                                                   self.model,
-                                                   self.model_blob)
+        prepared_face_image = self.__prepare_image(normalized_face)
         ir_result = self.model.infer(inputs={self.model_blob: prepared_face_image})
         self.display_result(ir_result, frame)
 
-    def __prepare_image(self, image, net, input_blob):
-        n, c, h, w = net.input_info[input_blob].input_data.shape
+    def __prepare_image(self, image):
+        n, c, h, w = self.model.input_info[self.model_blob].input_data.shape
         images = np.ndarray(shape=(n, c, h, w))
         for i in range(n):
             if image.shape[:-1] != (h, w):
@@ -221,22 +190,35 @@ class CNNPrediction:
         if self.__is_video_input():
             video = file
             frames = self.__frame_generator.get_frames(video)
-            faces = self.__face_detector.get_frames(frames)
+            if self.__prediction_conf['preprocessing']['spatial_normalization']:
+                faces = self.__spatial_normalizer.get_frames(frames)
+            elif self.__prediction_conf['preprocessing']['face_detector']:
+                faces = self.__face_detector.get_frames(frames)
+                if self.__prediction_conf['preprocessing']['face_alignment']:
+                    faces = self.__face_alignment.get_frames(frames)
             normalized_faces = self.__normalizer.get_frames(faces)
             return normalized_faces
         else:
             raise Exception("check input type and model format in configuration")
 
-    def get_data_from_camera(self, frame):
+    def __get_data_from_camera(self, frame):
         """
         This function gets camera frame and returns normalized frame with detected faces
         :param frame
         :return: frame with detected face
         """
         if not self.__is_video_input():
-            image = frame
-            face_image = self.__face_detector.get_frame(image)
-            return face_image
+            prepared_face = None
+            normalized_face = None
+            if self.__prediction_conf['preprocessing']['spatial_normalization']:
+                prepared_face = self.__spatial_normalizer.get_frame(frame)
+            elif self.__prediction_conf['preprocessing']['face_detector']:
+                prepared_face = self.__face_detector.get_frame(frame)
+                if self.__prediction_conf['preprocessing']['face_alignment']:
+                    prepared_face = self.__face_alignment.get_frame(frame)
+            if prepared_face is not None:
+                normalized_face = self.__normalizer.get_frame(prepared_face)
+            return normalized_face
         else:
             raise Exception("check input type and model format in configuration")
 
@@ -258,9 +240,11 @@ class CNNPrediction:
                     self.__logger.logs(ir_result)
         elif self.__is_video_input():
             if self.__prediction_conf['model_format'] == 'h5':
-                self.__logger.logs(result)
+                self.__logger.logs(result[0])
             if self.__prediction_conf['model_format'] == 'IR':
-                self.__logger.logs(list(result.values())[0])
+                for key, probes in result.items():
+                    ir_result = probes[0]
+                    self.__logger.logs(ir_result)
 
     def __is_video_input(self):
         """
