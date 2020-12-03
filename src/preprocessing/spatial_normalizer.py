@@ -10,7 +10,7 @@ import math
 import cv2
 import dlib
 import numpy as np
-from utility import Utility
+from src.preprocessing.utility import Utility
 from src.preprocessing.ipreprocessing import IPreprocessing
 from src.preprocessing.frame_generator import FrameGenerator
 
@@ -58,11 +58,6 @@ class SpatialNormalization(IPreprocessing):
         """
         spatial_normalized_frames = []
         for frame in frame_list:
-            # resize image to decrease spatial normalization execution time
-            img_height = frame.shape[0]
-            resize_percent = Utility.calculate_resize_percent(img_height)
-            if resize_percent < 1:
-                frame = Utility.resize_image(frame, resize_percent)
             # collect spatial normalized frame
             spatial_normalized_frames.append(self.get_frame(frame))
         return spatial_normalized_frames
@@ -90,6 +85,11 @@ class SpatialNormalization(IPreprocessing):
                             normalized_frames[i])
 
     def get_frame(self, image):
+        # resize image to decrease spatial normalization execution time
+        img_height = image.shape[0]
+        resize_percent = Utility.calculate_resize_percent(img_height)
+        if resize_percent < 1:
+            image = Utility.resize_image(image, resize_percent)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         face_shape = None
         if self.__is_rpi:
