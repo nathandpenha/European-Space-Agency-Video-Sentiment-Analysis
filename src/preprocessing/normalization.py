@@ -20,13 +20,13 @@ class Normalization(IPreprocessing):
         self.__image_size= image_size
 
     def get_frames(self, frame_list):
-        """
-        This function returns a list of detected normalized frames
+        """returns a list of detected normalized frames
 
-        :param frame_list: list of  normalized images stored as type ndarray
-        :type frame_list: list
-        :return: a list of normalized frames
-        :rtype: list
+        Args:
+            frame_list: list of  normalized images stored as type ndarray(list)
+
+        Returns:
+            a list of normalized frames
         """
         frames = []
         for face in frame_list:

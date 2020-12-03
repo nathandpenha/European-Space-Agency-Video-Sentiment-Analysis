@@ -18,10 +18,14 @@ class FaceExtractor:
         self.format_type = image_format
 
     def face_extractor(self, save_flag = True):
-        """
-        this function detects a face from an input image and saves the extracted
+        """detects a face from an input image and saves the extracted
         face image into a given output directory or store into a variable list according to the
-        function argument value
+        function argument value.
+
+        Args:
+            save_flag: boolean variable decides if save face images
+        Returns:
+            list of face images
         """
         face_list = []
         face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")

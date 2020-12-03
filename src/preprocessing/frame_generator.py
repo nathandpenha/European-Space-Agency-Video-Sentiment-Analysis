@@ -32,12 +32,14 @@ class FrameGenerator(IPreprocessing):
         self.__frame_per_second = frame_per_second
 
     def get_frames(self, video):
-        """
-        This function returns a list of frames from a video.
+        """returns a list of frames from a video.
         __CAP_PROP_FRAME_COUNT constant was reassigned locally due to inaccessibility of
         several internal cv2 files from rPI.
-        :param video:  video object of type cv2.VideoCapture.
-        :return frames: list of frames based on the __frame_per_second parameter.
+
+        Args:
+            video:  video object of type cv2.VideoCapture.
+        Returns
+            list of frames based on the __frame_per_second parameter.
         """
         video_fps = int(video.get(self.__CAP_PROP_FRAME_COUNT))
         frame_counter = 0
@@ -50,14 +52,18 @@ class FrameGenerator(IPreprocessing):
         return frames
 
     def get_frames(self, video, number_of_frames):
-        """
-        This function returns a list of frames from a video.
+        """returns a list of frames from a video.
+
         Number of the returned frames will be equal to number_of_frames.
         __CAP_PROP_FRAME_COUNT constant was reassigned locally due to inaccessibility of
         several internal cv2 files from rPI.
-        :param video:  video object of type cv2.VideoCapture.
-        :param number_of_frames: an integer identifying number frames to extract
-        :return frames: list of frames based on the number_of_frames parameter.
+
+        Args:
+            video:  video object of type cv2.VideoCapture.
+            number_of_frames: an integer identifying number frames to extract
+
+        Returns:
+            list of frames based on the number_of_frames parameter.
         """
         nframe = video.get(self.__CAP_PROP_FRAME_COUNT)
         if number_of_frames < 0:
@@ -71,15 +77,13 @@ class FrameGenerator(IPreprocessing):
         return frame_array
 
     def save_frames(self, frame_dict, output_path, number_of_frames=None):
-        """
-        This function accepts a dictionary of videos with their names and
+        """accepts a dictionary of videos with their names and
         extracts and saves frames on the disk.
-        :param frame_dict: A dictionary containing the names of videos
-        and video objects of type cv2.VideoCapture.
-        :param output_path: A path to save the generated frames
-        for each video.
-        :param number_of_frames: an integer identifying number frames to extract.
-        None by default.
+
+        Args:
+            frame_dict: A dictionary containing the names of videos and video objects of type cv2.VideoCapture.
+            output_path: A path to save the generated frames for each video.
+            number_of_frames: an integer identifying number frames to extract. None by default.
         """
         if output_path == '':
             project_path = os.path.abspath(os.path.join(__file__, "../../.."))

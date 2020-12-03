@@ -14,11 +14,11 @@ class ModelOptimization:
     This class is used to optimize a trained model
     """
     def optimize_model(self, model_type, parameters):
-        """
-        This function optimizes a given cnn model
-        :param model_type: type of model architecture
-        :param parameters: optimizer  including paths
-        :type parameters: dict
+        """optimizes a given cnn model
+
+        Args:
+            model_type: type of model architecture
+            parameters: optimizer  including paths(dict)
         """
 
         # set openvino installation path

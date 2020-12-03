@@ -18,13 +18,14 @@ class IModelBuilder(ABC):
     """
     @abstractmethod
     def build_model(self, num_classes, num_filters, kernel_size, input_shape, depth):
-        """
-        This is an abstract function
-        :param num_classes: number of classes
-        :param num_filters: convolution filters
-        :param kernel_size: filters
-        :param input_shape: input shape of the model
-        :param depth: sequence of frames needed for 3d cnn
+        """abstract function
+
+        Args:
+            num_classes: number of classes
+            num_filters: convolution filters
+            kernel_size: filters
+            input_shape: input shape of the model
+            depth: sequence of frames needed for 3d cnn
         """
         pass
 
@@ -34,9 +35,10 @@ class MobileNet(IModelBuilder):
     This class is used to create a MobilenetV2 cnn model type
     """
     def build_model(self, num_classes, num_filters, kernel_size, input_shape, depth):
-        """
-        this function builds mobil_net model and returns the  model
-        :return: mobile_net model
+        """builds mobil_net model and returns the  model
+
+        Returns:
+            mobile_net model
         """
         base_model = MobileNetV2(weights='imagenet', include_top=False)
         x = base_model.output
@@ -54,9 +56,10 @@ class ThreeDCNNV1(IModelBuilder):
     This class is used to create a 3D CNN model type with Three convolution layers
     """
     def build_model(self, num_classes, num_filters, kernel_size, input_shape, depth):
-        """
-        this function build a 3D CNN model and returns the  model
-        :return: 3d_model
+        """builds a 3D CNN model and returns the  model
+
+        Returns:
+            3d_model
         """
         model = Sequential()
         _3d_input_shape = (input_shape[0], input_shape[1], depth, input_shape[2])

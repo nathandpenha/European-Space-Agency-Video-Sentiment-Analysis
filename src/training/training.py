@@ -31,12 +31,13 @@ class Training:
         self.__opt = Adam(learning_rate=learning_rate)
 
     def load_data(self, input_path):
-        """
-        This function returns the training, validation and testing dataset with their labels
-        :param input_path: a path to lead the preprocessed training dataset
-        :type input_path: String
-        :return: a pair of training, validation, and testing dataset
-        :rtype: list
+        """loads and returns the training, validation and testing dataset with their labels
+
+        Args:
+            input_path: a path to lead the preprocessed training dataset, string type
+
+        Returns:
+            a pair of training, validation, and testing dataset, presenting as a list of strings.
         """
         data_loader = DataLoader()
         x_train, y_train = data_loader.load_train_data(input_path)
@@ -45,14 +46,14 @@ class Training:
         return x_train, y_train, x_val, y_val, x_test, y_test
 
     def __convert_3d_to_2d_array(self, images, labels, gray_color):
-        """
-        This function returns a 2d array list of gray images with their class labels
-        :param images: array of images
-        :type images: numpy array
-        :param labels: array of labels
-        :type labels: numpy array
-        :return: array of gray images with their labels
-        :rtype: numpy array
+        """returns a 2d array list of gray images with their class labels
+
+        Args:
+            images: array of images(numpy array)
+            labels: array of labels(numpy array)
+
+        Returns:
+            array of gray images with their labels(numpy array)
         """
         x_new = []
         y_new = []
@@ -87,24 +88,25 @@ class Training:
         np.save(history_file_path, training_history.history)
 
     def evaluate_model(self, model, x_test, y_test):
-        """
-        This function evaluates and displays the performance of the model on test data.
-        :param model: a trained model
-        :type model: float
-        :param x_test: array list of frames
-        :type x_test: numpy array
-        :param y_test: list of labels for frames
-        :type y_test: numpy array
+        """evaluates and displays the performance of the model on test data.
+
+        Args:
+            model: a trained model(float)
+            x_test: array list of frames(numpy array)
+            y_test: list of labels for frames(numpy array)
         """
         model_score = model.evaluate(x_test, y_test, verbose=1)
         print("Model accuracy: {}".format(model_score[1]))
 
     def train_model(self, model_type, parameters):
-        """
-        This function trains and evaluates a given cnn model based training parameters.
-        :param model_type: type of model architecture
-        :param parameters: a list of training parameters
-        :type parameters: dict
+        """trains and evaluates a given cnn model based training parameters.
+
+        Args:
+            model_type: type of model architecture
+            parameters: a list of training parameters(dict)
+
+        Raises:
+            ValueError: model builder does not exist.
         """
         model_dict = {"MobileNet": MobileNet, "ThreeDCNNV1": ThreeDCNNV1}
         # load data

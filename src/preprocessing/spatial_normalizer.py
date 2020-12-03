@@ -51,10 +51,13 @@ class SpatialNormalization(IPreprocessing):
         return x_min, y_min, x_max, y_max
 
     def get_frames(self, frame_list):
-        """
-        This function accepts a list of frames. It detects faces in these frames and normalize them spatially.
-        :param frame_list: list of frames each containing a human face
-        :return: list of frames with spatially normalized faces
+        """accepts a list of frames. It detects faces in these frames and normalize them spatially.
+
+        Args:
+            frame_list: list of frames each containing a human face
+
+        Returns:
+            list of frames with spatially normalized faces
         """
         spatial_normalized_frames = []
         for frame in frame_list:
@@ -69,12 +72,15 @@ class SpatialNormalization(IPreprocessing):
         return spatial_normalized_frames
 
     def save_frames(self, frame_dict, output_path):
-        """
-        This method accepts a dictionary and an input path. The dictionary contains filename as key
-        and the corresponding frame as value. It spatially normalize the face of the subject in all frames and save the
+        """accepts a dictionary and an input path. The dictionary contains filename as key
+        and the corresponding frame as value.
+
+        It spatially normalize the face of the subject in all frames and save the
         normalized frames as a .jpg file in the output_path.
-        :param frame_dict: A dictionary containing filename as the key and object of type OpenCV frame as values
-        :param output_path: A string containing the path for saving the spatially normalized frames
+
+        Args:
+            frame_dict: A dictionary containing filename as the key and object of type OpenCV frame as values
+            output_path: A string containing the path for saving the spatially normalized frames
         """
         if not os.path.exists(output_path):
             os.makedirs(output_path)
