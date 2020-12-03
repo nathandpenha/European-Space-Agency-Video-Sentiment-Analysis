@@ -2,14 +2,14 @@ video:
 
   prediction:
     input_video_file:
-    input_type: 'Video' # Video or Camera
+    input_type: 'Camera' # Video or Camera
     frame_per_second: 6
     is_rpi_camera: False
     model_type: CNN #CNN or 3d_CNN
     model_format: IR #IR or h5
     model_file_name: 'MobileNetV2.h5'
     output_type:  # CMD, File or leave it empty to have both
-    log_directory_path:
+    log_directory_path: ''
     model_input_shape:
       - channels: 3
       - height: 224

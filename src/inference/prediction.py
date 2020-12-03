@@ -12,6 +12,7 @@ import cv2
 import numpy as np
 from tensorflow.keras import models
 import os, sys
+import yaml
 from openvino.inference_engine import IECore
 
 current_directory = os.getcwd()
@@ -255,13 +256,14 @@ class Prediction:
         :param image: captured image
         """
         if not self.__is_video_input():
+            emotions_to_use = self.__read_preprosessing_config_file()
             if self.__prediction_conf['model_format'] == 'h5':
-                self.__gui_output.draw_histogram(result[0], image)
+                self.__gui_output.draw_histogram(result[0], image, emotions_to_use)
                 self.__logger.logs(result[0])
             if self.__prediction_conf['model_format'] == 'IR':
                 for key, probes in result.items():
                     ir_result = probes[0]
-                    self.__gui_output.draw_histogram(ir_result, image)
+                    self.__gui_output.draw_histogram(ir_result, image, emotions_to_use)
                     self.__logger.logs(ir_result)
         elif self.__is_video_input():
             if self.__prediction_conf['model_format'] == 'h5':
@@ -269,6 +271,14 @@ class Prediction:
             if self.__prediction_conf['model_format'] == 'IR':
                 self.__logger.logs(list(result.values())[0])
 
+    def __read_preprosessing_config_file(self):
+        with open("../training/config/data_preparation_config.yaml") as file:
+            config = yaml.load(file, Loader = yaml.FullLoader)
+        emotions_dict = config['data_parameters']['emotion']
+        emotions_to_use = []
+        for key, value in emotions_dict.items():
+            emotions_to_use.append(value)
+        return emotions_to_use
 
 if __name__ == '__main__':
     predict = Prediction()
