@@ -27,17 +27,20 @@ class FrameGenerator(IPreprocessing):
     """
 
     __frame_per_second = None
+    __CAP_PROP_FRAME_COUNT = 7
 
     def __init__(self, frame_per_second):
         self.__frame_per_second = frame_per_second
 
     def get_frames(self, video):
         """
-        This function returns a list of frames from a video
+        This function returns a list of frames from a video.
+        __CAP_PROP_FRAME_COUNT constant was reassigned locally due to inaccessibility of
+        several internal cv2 files from rPI.
         :param video:  video object of type cv2.VideoCapture.
         :return frames: list of frames based on the __frame_per_second parameter.
         """
-        video_fps = int(video.get(cv2.CAP_PROP_FRAME_COUNT)) if int(video.get(cv2.CAP_PROP_FRAME_COUNT)) > 0 else 7
+        video_fps = int(video.get(self.__CAP_PROP_FRAME_COUNT))
         frame_counter = 0
         frames = []
         for i in range(0, video_fps):
@@ -66,14 +69,15 @@ class FrameGenerator(IPreprocessing):
     def get_equal_frames(self, video, number_of_frames):
         """
         This function returns a list of frames from a video.
-        Number of the returned frames will be equal to number_of_frames
-
+        Number of the returned frames will be equal to number_of_frames.
+        __CAP_PROP_FRAME_COUNT constant was reassigned locally due to inaccessibility of
+        several internal cv2 files from rPI.
         :param video:  video object of type cv2.VideoCapture.
         :param number_of_frames: an integer identifying number frames to extract
         :return frames: list of frames based on the number_of_frames parameter.
         """
         n_frame = int(video.get(cv2.CAP_PROP_FRAME_COUNT)) if int(
-                video.get(cv2.CAP_PROP_FRAME_COUNT)) > 0 else self.__count_frames_manual(video)
+                video.get(self.__CAP_PROP_FRAME_COUNT)) > 0 else self.__count_frames_manual(video)
         frames = [x * n_frame / number_of_frames for x in range(number_of_frames)]
         frame_array = []
         for i in range(number_of_frames):
@@ -90,6 +94,8 @@ class FrameGenerator(IPreprocessing):
         and video objects of type cv2.VideoCapture.
         :param output_path: A path to save the generated frames
         for each video.
+        :param number_of_frames: an integer identifying number frames to extract.
+        None by default.
         """
         if not os.path.exists(output_path):
             os.makedirs(output_path)

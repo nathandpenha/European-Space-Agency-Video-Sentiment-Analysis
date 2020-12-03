@@ -1,10 +1,13 @@
 """
-Date : 19 November 2020
-Authors: Akram Shokri
+Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
+@ Authors: Akram Shokri a.shokri@tue.nl
+@ Contributors: Yusril Maulidan Raji y.m.raji@tue.nl
+Last modified date: 01-12-2020
 """
 import cv2
 import dlib
 import os
+from .utility import Utility
 from .ipreprocessing import IPreprocessing
 from .frame_generator import FrameGenerator
 
@@ -13,6 +16,7 @@ class FaceAlignment(IPreprocessing):
     """
     This class is for aligning faces inside frames so as the eyes are in one line and both parallel to the x-axis.
     """
+
     def __init__(self):
         self.__detector = dlib.get_frontal_face_detector()
         self.__predictor = dlib.shape_predictor(
@@ -26,16 +30,20 @@ class FaceAlignment(IPreprocessing):
         """
         aligned_faces = []
         for frame in frame_list:
-            aligned_faces.append(self.get_frame(frame))
-        return aligned_faces
+            # resize image to decrease the alignment execution time.
+            img_height = frame.shape[0]
+            resize_percent = Utility.calculate_resize_percent(img_height)
+            if resize_percent < 1:
+                frame = Utility.resize_image(frame, resize_percent)
 
-    def get_frame(self, frame):
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        detections = self.__detector(gray, 1)
-        if len(detections) > 0 and frame is not None:
-            detected_face = detections[0]
-            img_shape = self.__predictor(frame, detected_face)
-            return dlib.get_face_chip(frame, img_shape, size=frame.shape[0], padding=0.00)
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            detections = self.__detector(gray, 1)
+            if len(detections) > 0 and frame is not None:
+                detected_face = detections[0]
+                img_shape = self.__predictor(frame, detected_face)
+                aligned_face = dlib.get_face_chip(frame, img_shape, size=frame.shape[0], padding=0.00)
+                aligned_faces.append(aligned_face)
+        return aligned_faces
 
     def save_frames(self, frame_dict, output_path):
         """

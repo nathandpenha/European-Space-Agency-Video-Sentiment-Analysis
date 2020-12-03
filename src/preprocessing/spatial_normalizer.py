@@ -1,29 +1,54 @@
 """
-Date : 24 November 2020
-Authors: Akram Shokri
+Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
+@ Authors: Akram Shokri a.shokri@tue.nl
+@ Contributors: Yusril Maulidan Raji y.m.raji@tue.nl
+Last modified date: 01-12-2020
 """
 
-import cv2
-import dlib
 import os
 import math
-import imutils
+import cv2
+import dlib
 import numpy as np
+from utility import Utility
 from src.preprocessing.ipreprocessing import IPreprocessing
 from src.preprocessing.frame_generator import FrameGenerator
 
 
 class SpatialNormalization(IPreprocessing):
     """
-    This class is for spatial normalization of faces in frames
+    This class is for extracting spatial normalization part of face from image(s)
     """
-
-    def __init__(self):
+    def __init__(self, rpi=False):
         self.__detector = dlib.get_frontal_face_detector()
         self.__predictor = dlib.shape_predictor(
             "../../models/shape_predictor_68_face_landmarks.dat")
         self.__left_eye = np.array([36, 37, 38, 39, 40, 41])
         self.__right_eye = np.array([42, 43, 44, 45, 46, 47])
+
+        self.__is_rpi = rpi
+        if self.__is_rpi:
+            # initialize openvino face detection lib
+            from openvino.inference_engine import IECore
+            ie = IECore()
+            net_face = ie.read_network(model="../../models/face-detection-adas-0001.xml",
+                                       weights="../../models/face-detection-adas-0001.bin")
+            self.__exec_net_face = ie.load_network(network=net_face, device_name="MYRIAD")
+            self.__input_blob_face = next(iter(net_face.input_info))
+            self.__output_blob_face = next(iter(net_face.outputs))
+            n_face, c_face, self.__h_face, self.__w_face = net_face.input_info[self.__input_blob_face].input_data.shape
+
+    def __detect_face_openvino(self, image):
+        height, width = image.shape[:2]
+        image = cv2.resize(image, (self.__w_face, self.__h_face))
+        image = np.transpose(image, (2, 0, 1))
+        image = np.expand_dims(image, axis=0)
+        output = self.__exec_net_face.infer(inputs={self.__input_blob_face: image})
+        output = output[self.__output_blob_face]
+        box = output[0][0][0][3:] * np.array([width, height, width, height])
+        x_min, y_min, x_max, y_max = box.astype(np.int32)
+
+        return x_min, y_min, x_max, y_max
 
     def get_frames(self, frame_list):
         """
@@ -33,6 +58,12 @@ class SpatialNormalization(IPreprocessing):
         """
         spatial_normalized_frames = []
         for frame in frame_list:
+            # resize image to decrease spatial normalization execution time
+            img_height = frame.shape[0]
+            resize_percent = Utility.calculate_resize_percent(img_height)
+            if resize_percent < 1:
+                frame = Utility.resize_image(frame, resize_percent)
+            # collect spatial normalized frame
             spatial_normalized_frames.append(self.get_frame(frame))
         return spatial_normalized_frames
 
@@ -60,34 +91,32 @@ class SpatialNormalization(IPreprocessing):
 
     def get_frame(self, image):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        detections = self.__detector(gray, 1)
-
-        if len(detections) > 0:
-            detected_face = detections[0]
-            face_shape = self.__predictor(gray, detected_face)
-            landmarks = self.__shape_to_np(face_shape)
-
-            left_eye_center = np.mean(landmarks[self.__left_eye], axis=0)
-            right_eye_center = np.mean(landmarks[self.__right_eye], axis=0)
-            image = self.__do_alignment(image, left_eye_center, right_eye_center)
-
-            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        face_shape = None
+        if self.__is_rpi:
+            # if rpi, use openvino model to detect the face
+            x_min, y_min, x_max, y_max = self.__detect_face_openvino(image)
+            face_shape = self.__predictor(gray, dlib.rectangle(x_min, y_min, x_max, y_max))
+        else:
+            # if non rpi, use dlib model to detect the face
             detections = self.__detector(gray, 1)
             if len(detections) > 0:
                 detected_face = detections[0]
                 face_shape = self.__predictor(gray, detected_face)
-                landmarks = self.__shape_to_np(face_shape)
 
-                left_eye_center = np.mean(landmarks[self.__left_eye], axis=0)
-                right_eye_center = np.mean(landmarks[self.__right_eye], axis=0)
+        if face_shape is not None:
+            landmarks = self.__shape_to_np(face_shape)
 
-                inner_eyes = (right_eye_center[0] - left_eye_center[0]) / 2
-                w = inner_eyes * 2.4
-                h = inner_eyes * 4.5
-                x = left_eye_center[0] + ((right_eye_center[0] - left_eye_center[0]) / 2) - (w / 2)
-                y = right_eye_center[1] - (inner_eyes * 1.3)
+            left_eye_center = np.mean(landmarks[self.__left_eye], axis=0)
+            right_eye_center = np.mean(landmarks[self.__right_eye], axis=0)
+            image, left_eye_center, right_eye_center = self.__do_alignment(image, left_eye_center, right_eye_center)
 
-                image = image[int(y):int(y + h), int(x):int(x + w)]
+            inner_eyes = (right_eye_center[0] - left_eye_center[0]) / 2
+            w = inner_eyes * 2.4
+            h = inner_eyes * 4.5
+            x = left_eye_center[0] + ((right_eye_center[0] - left_eye_center[0]) / 2) - (w / 2)
+            y = right_eye_center[1] - (inner_eyes * 1.3)
+
+            image = image[int(y):int(y + h), int(x):int(x + w)]
 
         return image
 
@@ -106,18 +135,26 @@ class SpatialNormalization(IPreprocessing):
         left_eye_x, left_eye_y = left_eye
         right_eye_x, right_eye_y = right_eye
 
+        c = self.__find_euclidean_distance(np.array(right_eye), np.array(left_eye))
+
+        new_left_eye = left_eye
+        new_right_eye = right_eye
+
         # find rotation direction
         if left_eye_y > right_eye_y:
             point_3rd = (right_eye_x, left_eye_y)
             direction = -1  # rotate same direction to clock
+            new_right_eye = (left_eye_x + c, left_eye_y)
+            center_rotate = left_eye
         else:
             point_3rd = (left_eye_x, right_eye_y)
             direction = 1  # rotate inverse direction of clock
+            new_left_eye = (right_eye_x - c, right_eye_y)
+            center_rotate = right_eye
 
         # find length of triangle edges
         a = self.__find_euclidean_distance(np.array(left_eye), np.array(point_3rd))
         b = self.__find_euclidean_distance(np.array(right_eye), np.array(point_3rd))
-        c = self.__find_euclidean_distance(np.array(right_eye), np.array(left_eye))
 
         # apply cosine rule
         if b != 0 and c != 0:  # this multiplication causes division by zero in cos_a calculation
@@ -129,9 +166,10 @@ class SpatialNormalization(IPreprocessing):
             if direction == -1:
                 angle = 90 - angle
 
-            img = imutils.rotate(img, direction * angle)
+            img_mat = cv2.getRotationMatrix2D((center_rotate[0], center_rotate[1]), direction * angle, 1.0)
+            img = cv2.warpAffine(img, img_mat, (img.shape[1], img.shape[0]))
 
-        return img
+        return img, new_left_eye, new_right_eye
 
     def __find_euclidean_distance(self, source_representation, test_representation):
         euclidean_distance = source_representation - test_representation
