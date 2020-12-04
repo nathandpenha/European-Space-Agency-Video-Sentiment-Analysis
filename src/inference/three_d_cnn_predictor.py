@@ -44,10 +44,14 @@ class ThreeDPrediction:
         self.__face_alignment = FaceAlignment()
         self.__normalizer = Normalization(self.__prediction_conf['gray_color'],
                                           self.__prediction_conf['model_input_shape'][1]['height'])
-        self.__spatial_normalizer = SpatialNormalization()
         self.__logger = Logger()
         self.__gui_output = GUIOutput()
         self.load_model()
+        if self.__prediction_conf['model_format'] == 'h5':
+            self.__spatial_normalizer = SpatialNormalization()
+        if self.__prediction_conf['model_format'] == 'IR':
+            self.__spatial_normalizer = SpatialNormalization()
+
 
     def load_model(self):
         """
@@ -68,14 +72,14 @@ class ThreeDPrediction:
         model_bin = os.path.splitext(model_xml)[0] + ".bin"
         # Plugin initialization for specified device and load extensions library if specified
         self.__logger.info("Creating inference Engine")
-        ie = IECore()
+        self.ie = IECore()
         if ir_run_conf['cpu_extension'] and 'CPU' in ir_run_conf['device']:
-            ie.add_extension(ir_run_conf['cpu_extension'], "CPU")
+            self.ie.add_extension(ir_run_conf['cpu_extension'], "CPU")
         # Read IR
         self.__logger.info("Loading network files:\n\t{}\n\t{}".format(model_xml, model_bin))
-        net = ie.read_network(model=model_xml, weights=model_bin)
+        net = self.ie.read_network(model=model_xml, weights=model_bin)
         if "CPU" in ir_run_conf['device']:
-            supported_layers = ie.query_network(net, "CPU")
+            supported_layers = self.ie.query_network(net, "CPU")
             not_supported_layers = [l for l in net.layers.keys() if l not in supported_layers]
             if len(not_supported_layers) != 0:
                 self.__logger.error(
@@ -87,7 +91,7 @@ class ThreeDPrediction:
                 sys.exit(1)
         model_blob = next(iter(net.input_info))
         self.__logger.info("Loading model to the plugin")
-        exec_net = ie.load_network(network=net, device_name=ir_run_conf['device'])
+        exec_net = self.ie.load_network(network=net, device_name=ir_run_conf['device'])
         return exec_net, model_blob
 
     def predict_emotion(self):

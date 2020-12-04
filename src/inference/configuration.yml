@@ -2,7 +2,7 @@ video:
 
   prediction:
     input_directory: 'D:\workspace\video-sentimental-analysis\src\inference\sam-happy.mp4'
-    input_type: Camera # Video or Camera
+    input_type: Video # Video or Camera
     frame_per_second: 6
     is_rpi_camera: False
     model_type: 3d_CNN #CNN or 3d_CNN
@@ -24,6 +24,6 @@ video:
     gray_color: True
     ir_run:
       # "Required. Path to an .xml file with a trained model."
-      model: 'D:\workspace\video-sentimental-analysis\src\inference\3d_cnn_candidate_model.xml'
+      model: 'D:\workspace\video-sentimental-analysis\src\inference\3d_cnn_ravdess_crema-d_model.xml'
       cpu_extension: # path to a shared library with the kernels implementations
       device: 'CPU' # target device to infer on (CPU, GPU, FPGA, HDDL, MYRIAD or HETERO)

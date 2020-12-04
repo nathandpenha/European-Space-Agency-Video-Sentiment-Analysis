@@ -19,21 +19,19 @@ class SpatialNormalization(IPreprocessing):
     """
     This class is for extracting spatial normalization part of face from image(s)
     """
-    def __init__(self, rpi=False):
+    def __init__(self, ie=None, optimized=False):
         self.__detector = dlib.get_frontal_face_detector()
         self.__predictor = dlib.shape_predictor(
             "../../models/shape_predictor_68_face_landmarks.dat")
         self.__left_eye = np.array([36, 37, 38, 39, 40, 41])
         self.__right_eye = np.array([42, 43, 44, 45, 46, 47])
 
-        self.__is_rpi = rpi
-        if self.__is_rpi:
+        self.__is_optimized = optimized
+        if self.__is_optimized:
             # initialize openvino face detection lib
-            from openvino.inference_engine import IECore
-            ie = IECore()
             net_face = ie.read_network(model="../../models/face-detection-adas-0001.xml",
                                        weights="../../models/face-detection-adas-0001.bin")
-            self.__exec_net_face = ie.load_network(network=net_face, device_name="MYRIAD")
+            self.__exec_net_face = ie.load_network(network=net_face, device_name="CPU")
             self.__input_blob_face = next(iter(net_face.input_info))
             self.__output_blob_face = next(iter(net_face.outputs))
             n_face, c_face, self.__h_face, self.__w_face = net_face.input_info[self.__input_blob_face].input_data.shape
@@ -92,7 +90,7 @@ class SpatialNormalization(IPreprocessing):
             image = Utility.resize_image(image, resize_percent)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         face_shape = None
-        if self.__is_rpi:
+        if self.__is_optimized:
             # if rpi, use openvino model to detect the face
             x_min, y_min, x_max, y_max = self.__detect_face_openvino(image)
             face_shape = self.__predictor(gray, dlib.rectangle(x_min, y_min, x_max, y_max))
@@ -102,10 +100,8 @@ class SpatialNormalization(IPreprocessing):
             if len(detections) > 0:
                 detected_face = detections[0]
                 face_shape = self.__predictor(gray, detected_face)
-
         if face_shape is not None:
             landmarks = self.__shape_to_np(face_shape)
-
             left_eye_center = np.mean(landmarks[self.__left_eye], axis=0)
             right_eye_center = np.mean(landmarks[self.__right_eye], axis=0)
             image, left_eye_center, right_eye_center = self.__do_alignment(image, left_eye_center, right_eye_center)
@@ -117,7 +113,6 @@ class SpatialNormalization(IPreprocessing):
             y = right_eye_center[1] - (inner_eyes * 1.3)
 
             image = image[int(y):int(y + h), int(x):int(x + w)]
-
         return image
 
     def __shape_to_np(self, shape, dtype="int"):
