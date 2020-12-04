@@ -10,7 +10,6 @@ The script is able to show histogram output in a separate window.
 """
 
 import cv2
-import random
 
 
 class GUIOutput:
@@ -46,8 +45,9 @@ class GUIOutput:
             i = 0
             for index, emotion in enumerate(self.__EMOTIONS):
                 if (enabled_emotions_status[index]):
-                    cv2.putText(image, emotion, (10, i * 40 + 40), cv2.FONT_ITALIC, 0.75, self.__COLORS[index],
-                                1)  # Add Emotions
+                    cv2.putText(image, emotion,
+                                (10, i * 40 + 40), cv2.FONT_ITALIC,
+                                0.75, self.__COLORS[index], 1)  # Add Emotions
                     cv2.rectangle(image, (160, i * 40 + 20),
                                   (160 + int(ir_result[index] * 100 * 1.5), (i + 1) * 40 + 4),
                                   self.__COLORS[index], -1)  # Add bars for histogram
