@@ -1,3 +1,5 @@
 outs:
-- md5: ee95a715e7254127630e275f0c304863.dir
+- md5: 220f2339ad423131fb186ff84d5c99d8.dir
+  size: 25269954
+  nfiles: 24
   path: prod_data

@@ -50,7 +50,7 @@ class FrameGenerator(IPreprocessing):
             frame_counter += 1
         return frames
 
-    def get_equal_frames(self, video, number_of_frames):
+    def get_frames(self, video, number_of_frames):
         """
         This function returns a list of frames from a video.
         Number of the returned frames will be equal to number_of_frames.
@@ -61,6 +61,8 @@ class FrameGenerator(IPreprocessing):
         :return frames: list of frames based on the number_of_frames parameter.
         """
         nframe = video.get(self.__CAP_PROP_FRAME_COUNT)
+        if number_of_frames < 0:
+            raise ValueError
         frames = [x * nframe / number_of_frames for x in range(number_of_frames)]
         frame_array = []
         for i in range(number_of_frames):
@@ -80,11 +82,14 @@ class FrameGenerator(IPreprocessing):
         :param number_of_frames: an integer identifying number frames to extract.
         None by default.
         """
+        if output_path == '':
+            project_path = os.path.abspath(os.path.join(__file__, "../../.."))
+            output_path = project_path + '/prod_data/tests/test_images/generated_frames/'
         if not os.path.exists(output_path):
             os.makedirs(output_path)
         for filename, video in frame_dict.items():
             if number_of_frames is not None:
-                frames = self.get_equal_frames(video, number_of_frames)
+                frames = self.get_frames(video, number_of_frames)
             else:
                 frames = self.get_frames(video)
             for i in range(0, len(frames)):
@@ -96,11 +101,11 @@ class FrameGenerator(IPreprocessing):
 def main():
     fg = FrameGenerator(6)
     cap = cv2.VideoCapture("1.mp4")
-    frames = fg.get_equal_frames(cap, 10)
+    frames = fg.get_frames(cap, 10)
     print(frames.__len__())
 
     cap = cv2.VideoCapture("2.mp4")
-    frames = fg.get_equal_frames(cap, 10)
+    frames = fg.get_frames(cap, 10)
     print(frames.__len__())
     fg.save_frames({"video1": cap}, "./output/", 10)
 
