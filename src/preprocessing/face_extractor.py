@@ -105,6 +105,11 @@ class FaceDetector(IPreprocessing):
         :param output_path: a path to save the detected human faces
         :type output_path: String
         """
+        if output_path == '':
+            project_path = os.path.abspath(os.path.join(__file__, "../../.."))
+            output_path = project_path + '/prod_data/tests/test_images/generated_faces/'
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
         images_file_name = []
         images = []
         for key, value in frame_dict.items():
