@@ -19,15 +19,15 @@ class SpatialNormalization(IPreprocessing):
     """
     This class is for extracting spatial normalization part of face from image(s)
     """
-    def __init__(self, ie=None, optimized=False):
+    def __init__(self, ie=None, is_rpi=False):
         self.__detector = dlib.get_frontal_face_detector()
         self.__predictor = dlib.shape_predictor(
             "../../models/shape_predictor_68_face_landmarks.dat")
         self.__left_eye = np.array([36, 37, 38, 39, 40, 41])
         self.__right_eye = np.array([42, 43, 44, 45, 46, 47])
 
-        self.__is_optimized = optimized
-        if self.__is_optimized:
+        self.__is_rpi = is_rpi
+        if self.__is_rpi:
             # initialize openvino face detection lib
             net_face = ie.read_network(model="../../models/face-detection-adas-0001.xml",
                                        weights="../../models/face-detection-adas-0001.bin")
@@ -90,7 +90,7 @@ class SpatialNormalization(IPreprocessing):
             image = Utility.resize_image(image, resize_percent)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         face_shape = None
-        if self.__is_optimized:
+        if self.__is_rpi:
             # if rpi, use openvino model to detect the face
             x_min, y_min, x_max, y_max = self.__detect_face_openvino(image)
             face_shape = self.__predictor(gray, dlib.rectangle(x_min, y_min, x_max, y_max))

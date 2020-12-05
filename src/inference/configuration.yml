@@ -2,9 +2,9 @@ video:
 
   prediction:
     input_directory: 'D:\workspace\video-sentimental-analysis\src\inference\sam-happy.mp4'
-    input_type: Video # Video or Camera
+    input_type: Camera # Video or Camera
     frame_per_second: 6
-    is_rpi_camera: False
+    is_rpi: False
     model_type: 3d_CNN #CNN or 3d_CNN
     model_format: IR #IR or h5
     model_directory: 'D:\workspace\video-sentimental-analysis\src\inference\3d_cnn_candidate_model.h5'

@@ -189,7 +189,7 @@ class CNNPrediction:
         """
         if self.__is_video_input():
             video = file
-            frames = self.__frame_generator.get_frames(video)
+            frames = self.__frame_generator.get_frames(video, self.__prediction_conf['is_rpi'])
             if self.__prediction_conf['preprocessing']['spatial_normalization']:
                 faces = self.__spatial_normalizer.get_frames(frames)
             elif self.__prediction_conf['preprocessing']['face_detector']:

@@ -50,7 +50,7 @@ class ThreeDPrediction:
         if self.__prediction_conf['model_format'] == 'h5':
             self.__spatial_normalizer = SpatialNormalization()
         if self.__prediction_conf['model_format'] == 'IR':
-            self.__spatial_normalizer = SpatialNormalization()
+            self.__spatial_normalizer = SpatialNormalization(self.ie, True)
 
 
     def load_model(self):
@@ -194,7 +194,7 @@ class ThreeDPrediction:
         return image_array
 
     def __prepare_video_3d(self, cap, d):
-        framearray = self.__frame_generator.get_equal_frames(cap, d)
+        framearray = self.__frame_generator.get_equal_frames(cap, d, self.__prediction_conf['is_rpi'])
         if self.__prediction_conf['preprocessing']['spatial_normalization']:
             framearray = self.__spatial_normalizer.get_frames(framearray)
         elif self.__prediction_conf['preprocessing']['face_detector']:
