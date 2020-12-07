@@ -13,11 +13,14 @@ class Utility:
     """
     @staticmethod
     def resize_image(image, percent):
-        """
-        resize an image based on the passed percent parameter
-        :param image: image that will be resized
-        :param percent: the end size of the resized image based on percentage
-        :return: the resized image
+        """resizes an image based on the passed percent parameter
+
+        Args:
+            image: image that will be resized
+            percent: the end size of the resized image based on percentage
+
+        Returns:
+            the resized image
         """
         # calculate the new size
         width = int(image.shape[1] * percent)
@@ -29,10 +32,12 @@ class Utility:
 
     @staticmethod
     def calculate_resize_percent(img_height, img_height_threshold=216):
-        """
-        calculate the resize percentage of an image based on the image height threshold
-        :param img_height: image's height that will be resized
-        :param img_height_threshold: optional. The default value is 216
-        :return: the resize percent in decimal format
+        """calculates the resize percentage of an image based on the image height threshold
+        Args:
+            img_height: image's height that will be resized
+            img_height_threshold: optional. The default value is 216
+
+        Returns:
+            the resize percent in decimal format
         """
         return img_height_threshold / img_height if img_height > img_height_threshold else 1.

@@ -53,11 +53,12 @@ class Logger:
             self.__file_handler.setLevel(log.INFO)
 
     def logs(self, result):
+        """gets the result of a prediction and log it based on config file
+
+        Args:
+            results: list of prediction results
         """
-        gets the result of a prediction and log it based on config file
-        :param output_type:
-        :param result:
-        """
+
         if self.__prediction_conf['output_type'] == 'CMD':
             self.__logs_cmd(result)
         elif self.__prediction_conf['output_type'] == 'File':
@@ -85,15 +86,17 @@ class Logger:
             "Detected emotion category : {} probability: {}".format(str(max_position), str(max_result)))
 
     def info(self, message):
-        """
-        gets a Message and add it as info to log
-        :param message:
+        """gets a Message and add it as info to log
+
+        Args:
+            message: information content
         """
         self.__app_log.info(message)
 
     def error(self, message):
-        """
-        gets a Message and add it as error to log
-        :param message:
+        """gets a Message and add it as error to log
+
+        Args:
+            message: information content
         """
         self.__app_log.error(message)

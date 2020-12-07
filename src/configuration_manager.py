@@ -10,12 +10,11 @@ import os
 
 class ConfigurationManager (object):
     """
-    To read configuration parameters from specified config file (.yml)
+    ConfigurationManager Class to load configurable from yaml configuration file
 
-    location: path
-        Path to the configuration file.
+    Attributes:
+        location: path to the configuration file.
     """
-
     def __init__(self, location):
         try:
             self.__load_configuration(location)
@@ -34,8 +33,9 @@ class ConfigurationManager (object):
 
     @property
     def configuration(self):
-        """
-        returns a yaml configuration file
-        :return:
+        """reads configuration parameters from specified config file (.yml)
+
+        Returns:
+            returns a yaml configuration file
         """
         return self.__configuration

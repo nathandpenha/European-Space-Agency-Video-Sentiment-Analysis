@@ -23,10 +23,13 @@ class FaceAlignment(IPreprocessing):
             "../../models/shape_predictor_68_face_landmarks.dat")
 
     def get_frames(self, frame_list):
-        """
-        This method accepts a frame as input and align the face of the subject in that frame.
-        It returns the result as a frame.
-        :param frame_list: list of objects of type OpenCV frame
+        """accepts a frame as input and align the face of the subject in that frame.
+
+        Args:
+             frame_list: list of objects of type OpenCV frame
+
+        Returns:
+            the result as a frame.
         """
         aligned_faces = []
         for frame in frame_list:
@@ -46,12 +49,13 @@ class FaceAlignment(IPreprocessing):
         return aligned_faces
 
     def save_frames(self, frame_dict, output_path):
-        """
-        This method accepts a dictionary and an input path. The dictionary contains filename as key
+        """accepts a dictionary and an input path. The dictionary contains filename as key
         and the corresponding frame as value. It aligns the face of the subject in all frames and save the aligned
         frames as a .jpg file in the output_path.
-        :param frame_dict: A dictionary containing filename as the key and object of type OpenCV frame as values
-        :param output_path: A string containing the path for saving the aligned frames
+
+        Args:
+            frame_dict: A dictionary containing filename as the key and object of type OpenCV frame as values
+            output_path: A string containing the path for saving the aligned frames
         """
         if not os.path.exists(output_path):
             os.makedirs(output_path)

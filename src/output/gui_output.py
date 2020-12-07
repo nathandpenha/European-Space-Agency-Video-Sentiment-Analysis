@@ -19,10 +19,11 @@ class GUIOutput:
     __EMOTIONS = ['Angry', 'Calm', 'Disgust', 'Fearful', 'Happy', 'Neutral', 'Sad', 'Surprise']
 
     def draw_histogram(self, ir_result, image):
-        """
-        This function shows a histogram Inference's module results on Raspberry's camera stream
-        :param ir_result: result from prediction
-        :param image: captured image
+        """shows a histogram Inference's module results on Raspberry's camera stream
+
+        Args:
+            ir_result: result from prediction
+            image: captured image
         """
         if ir_result is not None:
             cv2.rectangle(image, (0, 0),

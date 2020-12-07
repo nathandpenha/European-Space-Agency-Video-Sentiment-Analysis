@@ -32,13 +32,13 @@ class DataPreparation:
     This class is used to generate training data
     """
     def get_training_data(self, parameters):
-        """
-        Gets labeled training frames from videos in each actors directory
-        inside the input directory.
-        :param parameters: a dictionary that contains the data preparation parameters
-        :type parameters: dict
-        :return: list of frames, list of labels
-        :rtype: ndarray
+        """gets labeled training frames from videos in each actors directory inside the input directory.
+
+        Args:
+            parameters: a dictionary that contains the data preparation parameters(dict)
+
+        Returns:
+            list of frames, list of labels(ndarray)
         """
         emotions_dict = parameters["emotion"]
         preprocess_dict = parameters["preprocessing"]
@@ -102,12 +102,14 @@ class DataPreparation:
         return video_list
 
     def split_data(self, dataset_type, parameters):
-        """
-        This function splits data into training, validation, and testing dataset
-        :param dataset_type: a string used to identify which dataset version to generate
-        :type dataset_type: String
-        :param parameters: a dictionary that contains the data preparation parameters
-        :type parameters: dict
+        """splits data into training, validation, and testing dataset
+
+        Args:
+            dataset_type: a string used to identify which dataset version to generate(String)
+            parameters: a dictionary that contains the data preparation parameters(dict)
+
+        Raises:
+            ValueError: wrong input type of dataset_type
         """
         data_output_path = parameters["data_output_path"]
         num_classes = parameters["num_classes"]

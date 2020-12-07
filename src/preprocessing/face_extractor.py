@@ -34,12 +34,13 @@ class FaceDetector(IPreprocessing):
         self.__face_cascade4 = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
     def __extract_face(self, frames):
-        """
-        This function returns a list of detected human faces
-        :param frames: list of images stored as type ndarray
-        :type frames: list
-        :return: a list of detected human faces
-        :rtype: list
+        """returns a list of detected human faces
+
+        Args:
+            frames: list of images stored as type ndarray(list)
+
+        Returns:
+            a list of detected human faces(list)
         """
         face_list = []
         for frame in frames:
@@ -66,21 +67,24 @@ class FaceDetector(IPreprocessing):
         return face_list
 
     def get_frames(self, frame_list):
-        """
-        This function returns a list of detected human faces
-        :param frame_list: list of images stored as type ndarray
-        :type frame_list: list
-        :return: a list of detected human faces
-        :rtype: list
+        """returns a list of detected human faces
+
+        Args:
+            frame_list: list of images stored as type ndarray
+
+        Returns:
+            a list of detected human faces
         """
         return self.__extract_face(frame_list)
 
     def get_frame(self, frame):
-        """
-        This function returns a detected human faces
-        :param frame: image stored as type ndarray
-        :return: a detected human faces
-        :rtype: image of the detected face
+        """returns a detected human faces
+
+        Args:
+            frame: image stored as type ndarray
+
+        Returns:
+            a image of the detected human faces
         """
         face_image = None
 
@@ -101,12 +105,11 @@ class FaceDetector(IPreprocessing):
         return face_image
 
     def save_frames(self, frame_dict, output_path):
-        """
-        This function saves the detected human faces to disk
-        :param frame_dict: dictionary of frames with their filenames
-        :type frame_dict: dictionary
-        :param output_path: a path to save the detected human faces
-        :type output_path: String
+        """saves the detected human faces to disk
+
+        Args:
+            frame_dict: dictionary of frames with their filenames
+            output_path: a path to save the detected human faces(String)
         """
         if output_path == '':
             project_path = os.path.abspath(os.path.join(__file__, "../../.."))

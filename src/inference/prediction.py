@@ -54,9 +54,8 @@ class Prediction:
 
     def load_model(self):
         """
-        This function:
-        - Loads h5 model for predict video emotion
-        - Loads IR model for Raspberry camera emotion
+        Loads h5 model for predict video emotion
+        Loads IR model for Raspberry camera emotion
         """
         if self.__prediction_conf['model_format'] == 'h5':
             self.model = models.load_model(self.__prediction_conf['model_file_name'])
@@ -106,10 +105,14 @@ class Prediction:
                 self.__predict_emotion_webcam()
 
     def __is_video_input(self):
-        """
-        This function checks if Inference module is running for prerecorded video
+        """checks if Inference module is running for prerecorded video
         or Camera
-        @:return True if video file was provided
+
+        Returns:
+            True if video file was provided
+
+        Raises:
+            Exception: input_type should be set to Camera or Video in Configuration
         """
         if self.__prediction_conf['input_type'] == 'Camera':
             return False
@@ -124,10 +127,16 @@ class Prediction:
             self.__predict(face)
 
     def __get_data_from_video_file(self, file):
-        """
-        This function gets file and returns frames with detected face
-        :param file
-        :return: frames with detected face
+        """gets file and returns frames with detected face
+
+        Args:
+            file: video path
+
+        Returns:
+            frames with detected face
+
+        Raises:
+            Exception: check input type and model format in configuration
         """
         if self.__is_video_input():
             video = file
@@ -179,10 +188,16 @@ class Prediction:
                 break
 
     def get_data_from_camera(self, frame):
-        """
-        This function gets camera frame and returns normalized frame with detected faces
-        :param frame
-        :return: frame with detected face
+        """gets camera frame and returns normalized frame with detected faces
+
+        Args:
+            frame: frame from camera
+
+        Returns:
+            frame with detected face
+
+        Raises:
+            Exception: check input type and model format in configuration
         """
         if not self.__is_video_input():
             image = frame
@@ -247,11 +262,12 @@ class Prediction:
         return images
 
     def display_result(self, result, image):
-        """
-        This function shows histogram for the rPI camera input and/or provide a command line/text file representation
-        of the output data
-        :param result: result from prediction
-        :param image: captured image
+        """shows histogram for the rPI camera input and/or provide a command line/text file representation
+        of the output data.
+
+        Args:
+            result: result from prediction
+            image: captured image
         """
         if not self.__is_video_input():
             if self.__prediction_conf['model_format'] == 'h5':
