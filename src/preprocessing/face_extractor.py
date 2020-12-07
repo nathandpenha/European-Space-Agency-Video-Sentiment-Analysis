@@ -1,8 +1,11 @@
 '''
-Date: 12 November 2020
-Authors: Samsom Beyene
+Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
+@Author: Samsom Beyene s.t.beyene@tue.nl
+@Contributor: Hossein Mahdian h.mahdian@tue.nl
+@Description:
 This script extracts human faces from a list of images
 and stores the result  in memory or to disk based on a flag from user input.
+@Last modified date: 24-11-2020
 '''
 
 import cv2

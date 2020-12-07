@@ -1,12 +1,11 @@
 """
-Date: 19 November 2020
-Authors: Vladimir Romashov, Hossein Mahdian
-
+Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
+@Author: Hossein Mahdian h.mahdian@tue.nl, Vladimir Romashov v.romashov@tue.nl
+@Description:
 This is a Inference module script that is able to detect emotion from camera stream or input video.
-
 It uses preprocessing module to prepare date for detection models. Also it uses Output module to display the results.
-
 The script is configurable with yaml configuration file
+@Last modified date: 30-11-2020
 """
 import cv2
 import numpy as np

@@ -1,7 +1,9 @@
 '''
-Date: 13 November 2020
-Authors: Samsom Beyene
-This script is an interface for the preprocessing submodule
+Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
+@Author: Samsom Beyene s.t.beyene@tue.nl
+@Contributor: Nathan Dpenha n.z.dpenha@tue.nl
+@Description: This script is an interface for the preprocessing submodule
+@Last modified date: 17-11-2020
 '''
 
 from abc import ABC, abstractmethod

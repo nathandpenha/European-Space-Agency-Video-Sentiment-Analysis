@@ -1,14 +1,13 @@
 """
-Date: 12 November 2020
-Authors: Nathan Dpenha, Akram Shokri
-
+Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
+@Authors: Nathan Dpenha n.z.dpenha@tue.nl, Akram Shokri a.shokri@tue.nl
+@Contributors: Hossein Mahdian h.mahdian@tue.nl, Samsom Beyene s.t.beyene@tue.nl
+@Description:
 This is a preprocessor script that is able to extract image frames from an input video.
-
 The script is able to store the extracted image frames on disk.
-
 The script is able to store the extracted image frames in memory (in a list).
-
 The script is configurable to indicate the number of frames per second that must be extracted
+@Last modified date: 30-11-2020
 """
 
 import cv2

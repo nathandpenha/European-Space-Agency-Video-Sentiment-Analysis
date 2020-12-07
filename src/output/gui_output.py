@@ -1,11 +1,11 @@
 """
-Date: 23 November 2020
-Authors: Hossein Mahdian, Vladimir Romashov
-
+Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
+@Author: Hossein Mahdian h.mahdian@tue.nl, Vladimir Romashov v.romashov@tue.nl
+@Description:
 This is an output module script that is able to show histogram with emotion distribution
 from camera stream.
-
 The script is able to show histogram output in a separate window.
+@Last modified date: 24-11-2020
 """
 
 import cv2

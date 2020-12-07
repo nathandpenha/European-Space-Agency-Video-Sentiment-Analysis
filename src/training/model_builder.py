@@ -1,8 +1,8 @@
 """
-Copyright (c) 2020 TU/e. All rights reserved.
-@Author Samsom Beyene s.t.beyene@tue.nl
-
-This script builds different type of (3d)cnn model architectures
+Copyright (c) 2020 TU/e - PDEng Software Technology c2019. All rights reserved.
+@Author: Samsom Beyene s.t.beyene@tue.nl
+@Description: This script builds different type of (3d)cnn model architectures
+@Last modified date: 27-11-2020
 """
 
 from abc import ABC, abstractmethod

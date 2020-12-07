@@ -1,8 +1,8 @@
 """
-Date: 19 November 2020
-Authors: Vladimir Romashov, Hossein Mahdian
-
-This is a Class to load configurable from yaml configuration file
+Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
+@Authors: Vladimir Romashov v.romashov@tue.nl, Hossein Mahdian h.mahdian@tue.nl
+@Description: This is a Class to load configurable from yaml configuration file
+@Last modified date: 24-11-2020
 """
 import yaml
 import os

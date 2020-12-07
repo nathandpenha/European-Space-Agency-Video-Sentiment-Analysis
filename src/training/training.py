@@ -1,18 +1,14 @@
 """
-Copyright (c) 2020 TU/e. All rights reserved.
-@Author Samsom Beyene s.t.beyene@tue.nl
-
+Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
+@Author: Samsom Beyene s.t.beyene@tue.nl
+@Description:
 This is a training module that  is used to train a given ANN type architecture.
-
 This script loads   training, validation, and testing dataset.
-
 This script builds, trains, and evaluates  a  cnn or 3D cnn model type.
-
 This script saves the trained model into a given directory.
-
 This scripts save  trained model information into a given directory.
-
 This class uses a configuration file './config/training_config.yaml'
+@Last modified date: 27-11-2020
 """
 
 import os

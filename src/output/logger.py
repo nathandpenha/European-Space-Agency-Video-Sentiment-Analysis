@@ -1,11 +1,11 @@
 """
-Date: 19 November 2020
-Authors: Hossein Mahdian, Vladimir Romashov
-
+Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
+@Author: Hossein Mahdian h.mahdian@tue.nl, Vladimir Romashov v.romashov@tue.nl
+@Description:
 This is an output module script that is able to print emotion destribution from
 raspberry camera stream or input video.
-
 The script is able to print output in a file or in command line.
+@Last modified date: 30-11-2020
 """
 
 import logging as log

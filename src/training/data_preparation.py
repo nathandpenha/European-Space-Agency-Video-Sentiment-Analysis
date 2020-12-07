@@ -1,12 +1,11 @@
 """
-Copyright (c) 2020 TU/e. All rights reserved.
-@Author Samsom Beyene s.t.beyene@tue.nl, Nathan Dpenha n.z.dpenha@tue.nl
-
+Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
+@Authors: Samsom Beyene s.t.beyene@tue.nl, Nathan Dpenha n.z.dpenha@tue.nl
+@Description:
 This script is used to generate training data.
-
 This script preprocess the raw training dataset  and save them into directory.
-
 This class uses a configuration file './config/data_preparation_config.yaml.'
+@Last modified date: 3011-2020
 """
 
 import os

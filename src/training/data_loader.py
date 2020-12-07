@@ -1,8 +1,8 @@
 """
-Copyright (c) 2020 TU/e. All rights reserved.
-@Author Samsom Beyene s.t.beyene@tue.nl
-
-This script loads the preprocessed training dataset
+Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
+@Author: Samsom Beyene s.t.beyene@tue.nl
+@Description: This script loads the preprocessed training dataset
+@Last modified date: 27-11-2020
 """
 import os
 import numpy as np
