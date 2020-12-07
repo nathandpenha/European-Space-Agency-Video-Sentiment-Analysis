@@ -1,6 +1,8 @@
 """
-Date : 23 November 2020
-Authors: Samsom Beyene
+Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
+@Author: Samsom Beyene s.t.beyene@tue.nl
+@Contributor: Hossein Mahdian h.mahdian@tue.nl
+@Last modified date: 24-11-2020
 """
 
 

@@ -1,8 +1,8 @@
 """
 Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved. 
-@ Authors: Akram Shokri a.shokri@tue.nl
-@ Contributors: Yusril Maulidan Raji y.m.raji@tue.nl
-Last modified date: 01-12-2020
+@Authors: Akram Shokri a.shokri@tue.nl
+@Contributors: Yusril Maulidan Raji y.m.raji@tue.nl
+@Last modified date: 02-12-2020
 """
 
 import os

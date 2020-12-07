@@ -1,8 +1,8 @@
 """
-Copyright (c) 2020 TU/e. All rights reserved.
-@Author Samsom Beyene s.t.beyene@tue.nl
-
-This script optimizes a trained model using OpenVino API.
+Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
+@Author: Samsom Beyene s.t.beyene@tue.nl
+@Description: This script optimizes a trained model using OpenVino API.
+@Last modified date: 27-11-2020
 """
 
 import os

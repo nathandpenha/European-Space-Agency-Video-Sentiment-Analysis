@@ -1,7 +1,12 @@
-'''
-This script takes videos from multiple sub directories of the RADVESS dataset and extracts the images. These images are then stored it in seperate individual sub directories based on the emotion type. The emotions directories are 01, 02, 03, 04, 05, 06, 07, 08 for 8 emotions.
-
-'''
+"""
+Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
+@Author: Nathan Dpenha n.z.dpenha@tue.nl
+@Description:
+This script takes videos from multiple sub directories of the RADVESS dataset and extracts the images.
+These images are then stored it in seperate individual sub directories based on the emotion type.
+The emotions directories are 01, 02, 03, 04, 05, 06, 07, 08 for 8 emotions.
+@Last modified date: 05-11-2020
+"""
 
 import ffmpeg 
 import os

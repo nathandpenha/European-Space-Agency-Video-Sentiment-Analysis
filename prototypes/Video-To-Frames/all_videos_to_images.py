@@ -1,9 +1,10 @@
-#Author Nathan Dpenha
+"""
+Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
+@Author: Nathan Dpenha n.z.dpenha@tue.nl
+@Description: This script takes videos from one directory and extracts images and stores it in an individual directory.
+@Last modified date: 05-11-2020
+"""
 
-'''
-This script takes videos from one directory and extracts images and stores it in an individual directory.
-
-'''
 import ffmpeg 
 import os
 from os import listdir

@@ -1,3 +1,9 @@
+"""
+Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
+@Author: Samsom Beyene s.t.beyene@tue.nl
+@Last modified date: 30-10-2020
+"""
+
 import cv2
 import glob
 import os
