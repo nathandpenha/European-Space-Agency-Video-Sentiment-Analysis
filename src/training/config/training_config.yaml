@@ -4,10 +4,6 @@ train_params:
   model_builder: ThreeDCNNV1  # type of model instance, possible values: MobileNet, ThreeDCNNV1
   model_output_path: ../../models # path to save a trained model
   trained_model_name: ""  # a filename for the trained model
-  model_input_path: ""  # absolute folder path to a trained model
-  optimized_output_path: "" # absolute folder path to save the optimized model
-  openvino_inst_dir: "" # absolute path to bin folder  of openvino installation
-  openvino_optimizer_dir: "" # absolute path to model_optimizer folder  of openvino installation
   epochs: 1
   batch_size: 128
   learning_rate: 0.001
@@ -18,4 +14,11 @@ train_params:
   gray_color: True
   depth : 12
   frames_per_second : 12
-
+optimization_params:
+  depth : 12
+  model_input_shape: [32, 32, 1]
+  trained_model_name: "" # a filename for the trained model
+  model_input_path: "" # absolute folder path to a trained model
+  optimized_output_path: "" # absolute folder path to save the optimized model
+  openvino_inst_dir: "" # absolute path to bin folder  of openvino installation
+  openvino_optimizer_dir: "" # absolute path to model_optimizer folder  of openvino installation

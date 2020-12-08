@@ -49,7 +49,7 @@ class ModelOptimization:
 if __name__ == '__main__':
     with open("config/training_config.yaml") as file:
         config = yaml.load(file, Loader=yaml.FullLoader)
-    parameters = config["train_params"]
+    parameters = config["optimization_params"]
     model_type = config["model_type"]
     optimizer = ModelOptimization()
     optimizer.optimize_model(model_type, parameters)
