@@ -5,7 +5,7 @@ Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
 This script is used to generate training data.
 This script preprocess the raw training dataset  and save them into directory.
 This class uses a configuration file './config/data_preparation_config.yaml.'
-@Last modified date: 3011-2020
+@Last modified date: 04-12-2020
 """
 
 import os
@@ -47,24 +47,23 @@ class DataPreparation:
         x_train, y_train = [], []
         x_val, y_val = [], []
         x_test, y_test = [], []
-
         frame_gen = FrameGenerator(parameters["frame_per_second"])
         face_detect = FaceDetector()
         normalizer = Normalization(parameters["gray_color"], parameters["image_size"])
         face_align = FaceAlignment()
         spatial_normalize = SpatialNormalization()
-        actors = self.__read_input_data(data_input_path)
-        for actor in actors:
+        dataset_types = self.__read_input_data(data_input_path)
+        for dataset in dataset_types:
             emotion_counter = 1
-            increment_once = True
-            videos = self.__read_input_data(data_input_path + '/' + actor + '/')
-            print("Current preprocessing : " + data_input_path + "/" + actor + '/')
+            skipped_emotions = []
+            videos = self.__read_input_data(data_input_path + '/' + dataset + '/')
+            print("Current preprocessing : " + data_input_path + "/" + dataset + '/')
             for filename in videos:
-                video = cv2.VideoCapture(data_input_path + '/' + actor + '/' + filename)
+                video = cv2.VideoCapture(data_input_path + '/' + dataset + '/' + filename)
                 if not emotions_dict[filename[6:8]]:
-                    if increment_once:
+                    if filename[6:8] not in skipped_emotions:
                         emotion_counter += 1
-                        increment_once = False
+                        skipped_emotions.append(filename[6:8])
                     continue
                 video_frames = frame_gen.get_frames(video, parameters["depth"])
                 if video_frames is not None or video_frames is not []:
@@ -81,10 +80,10 @@ class DataPreparation:
                         frames.append(normalizer.get_frames(video_frames))
                         labels.append(int(filename[6:8]) - emotion_counter)
                     else:
-                        if int(filename[18:20]) in range(1, 21):
+                        if dataset == "training":
                             x_train.append(normalizer.get_frames(video_frames))
                             y_train.append(int(filename[6:8]) - emotion_counter)
-                        elif int(filename[18:20]) in range(21, 23):
+                        elif dataset == "validation":
                             x_val.append(normalizer.get_frames(video_frames))
                             y_val.append(int(filename[6:8]) - emotion_counter)
                         else:
