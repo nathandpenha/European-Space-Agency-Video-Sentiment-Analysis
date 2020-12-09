@@ -42,9 +42,7 @@ class Prediction:
         self.__prediction_conf = config['video']['prediction']
 
     def __read_enabled_emotions(self):
-        with open("../training/config/data_preparation_config.yaml") as file:
-            config = yaml.load(file, Loader = yaml.FullLoader)
-        emotions_dict = config['data_parameters']['emotion']
+        emotions_dict = self.__prediction_conf['emotion_toggle']
         enabled_emotions = []
         for key, value in emotions_dict.items():
             enabled_emotions.append(value)
