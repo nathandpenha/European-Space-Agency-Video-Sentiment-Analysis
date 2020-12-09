@@ -38,9 +38,11 @@ class CNNPrediction:
     __output_type = None
     __logger = None
     __ie = None
+    __enabled_emotions = None
 
-    def __init__(self, predict_conf):
+    def __init__(self, predict_conf, enabled_emotions):
         self.__prediction_conf = predict_conf
+        self.__enabled_emotions = enabled_emotions
         self.__frame_generator = FrameGenerator(self.__prediction_conf['frame_per_second'])
         self.__face_detector = FaceDetector()
         self.__face_alignment = FaceAlignment()
@@ -229,12 +231,12 @@ class CNNPrediction:
         """
         if not self.__is_video_input():
             if self.__prediction_conf['model_format'].lower() == 'h5':
-                self.__gui_output.draw_histogram(result[0], image)
+                self.__gui_output.draw_histogram(result[0], image, self.__enabled_emotions)
                 self.__logger.logs(result[0])
             if self.__prediction_conf['model_format'].lower() == 'ir':
                 for key, probes in result.items():
                     ir_result = probes[0]
-                    self.__gui_output.draw_histogram(ir_result, image)
+                    self.__gui_output.draw_histogram(ir_result, image, self.__enabled_emotions)
                     self.__logger.logs(ir_result)
         elif self.__is_video_input():
             if self.__prediction_conf['model_format'].lower() == 'h5':
