@@ -16,7 +16,7 @@ class GUIOutput:
     This class manages histogram representation
     """
 
-    __EMOTIONS = ['Angry', 'Calm', 'Disgust', 'Fearful', 'Happy', 'Neutral', 'Sad', 'Surprise']
+    __EMOTIONS = ['Neutral', 'Happy', 'Sad', 'Angry', 'Fearful']
 
     def draw_histogram(self, ir_result, image):
         """shows a histogram Inference's module results on Raspberry's camera stream
@@ -27,7 +27,7 @@ class GUIOutput:
         """
         if ir_result is not None:
             cv2.rectangle(image, (0, 0),
-                           (150, 330),
+                           (150, int(len(self.__EMOTIONS) * 45)),
                            (0, 0, 0), -1)
             for index, emotion in enumerate(self.__EMOTIONS):
                 cv2.putText(image, emotion, (10, index * 40 + 40), cv2.FONT_ITALIC, 1, (255, 255, 255), 1)

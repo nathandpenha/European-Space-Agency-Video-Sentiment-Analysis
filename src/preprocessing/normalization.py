@@ -8,7 +8,13 @@ Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
 
 import cv2
 import numpy as np
-from .ipreprocessing import IPreprocessing
+import sys
+import os
+current_directory = os.getcwd()
+parent_directory = os.path.dirname(current_directory)
+grand_parent_directory = os.path.dirname(parent_directory)
+sys.path.insert(0, grand_parent_directory)
+from src.preprocessing.ipreprocessing import IPreprocessing
 
 
 class Normalization(IPreprocessing):

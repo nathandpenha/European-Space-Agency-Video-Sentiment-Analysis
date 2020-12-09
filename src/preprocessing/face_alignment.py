@@ -33,20 +33,27 @@ class FaceAlignment(IPreprocessing):
         """
         aligned_faces = []
         for frame in frame_list:
-            # resize image to decrease the alignment execution time.
-            img_height = frame.shape[0]
-            resize_percent = Utility.calculate_resize_percent(img_height)
-            if resize_percent < 1:
-                frame = Utility.resize_image(frame, resize_percent)
-
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            detections = self.__detector(gray, 1)
-            if len(detections) > 0 and frame is not None:
-                detected_face = detections[0]
-                img_shape = self.__predictor(frame, detected_face)
-                aligned_face = dlib.get_face_chip(frame, img_shape, size=frame.shape[0], padding=0.00)
-                aligned_faces.append(aligned_face)
+            aligned_faces.append(self.get_frame(frame))
         return aligned_faces
+
+    def get_frame(self, frame):
+        """
+        This method accepts a frame as input and align the face of the subject in that frame.
+        It returns the result as a frame.
+        :param frame: an object of type OpenCV frame
+        """
+        # resize image to decrease the alignment execution time.
+        img_height = frame.shape[0]
+        resize_percent = Utility.calculate_resize_percent(img_height)
+        if resize_percent < 1:
+            frame = Utility.resize_image(frame, resize_percent)
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        detections = self.__detector(gray, 1)
+        if len(detections) > 0 and frame is not None:
+            detected_face = detections[0]
+            img_shape = self.__predictor(frame, detected_face)
+            return dlib.get_face_chip(frame, img_shape, size=frame.shape[0], padding=0.00)
+
 
     def save_frames(self, frame_dict, output_path):
         """accepts a dictionary and an input path. The dictionary contains filename as key

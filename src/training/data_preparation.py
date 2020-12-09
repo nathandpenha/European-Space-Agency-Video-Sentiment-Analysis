@@ -65,7 +65,7 @@ class DataPreparation:
                         emotion_counter += 1
                         skipped_emotions.append(filename[6:8])
                     continue
-                video_frames = frame_gen.get_frames(video, parameters["depth"])
+                video_frames = frame_gen.get_number_of_frames(video, parameters["depth"])
                 if video_frames is not None or video_frames is not []:
                     for key, value in preprocess_dict.items():
                         if key == "face_detector" and value:

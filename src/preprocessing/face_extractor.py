@@ -33,6 +33,7 @@ class FaceDetector(IPreprocessing):
         self.__face_cascade3 = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_profileface.xml')
         self.__face_cascade4 = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
+
     def __extract_face(self, frames):
         """returns a list of detected human faces
 
