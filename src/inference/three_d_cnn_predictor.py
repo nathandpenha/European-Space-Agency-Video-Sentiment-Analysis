@@ -37,9 +37,11 @@ class ThreeDPrediction:
     __model_type = None
     __output_type = None
     __ie = None
+    __enabled_emotions = None
 
-    def __init__(self, predict_conf):
+    def __init__(self, predict_conf, enabled_emotions):
         self.__prediction_conf = predict_conf
+        self.__enabled_emotions = enabled_emotions
         self.__frame_generator = FrameGenerator(self.__prediction_conf['frame_per_second'])
         self.__face_detector = FaceDetector()
         self.__face_alignment = FaceAlignment()
@@ -218,11 +220,11 @@ class ThreeDPrediction:
         """
         if not self.__is_video_input():
             if self.__prediction_conf['model_format'].lower() == 'h5':
-                self.__gui_output.draw_histogram(result[0], image)
+                self.__gui_output.draw_histogram(result[0], image, self.__enabled_emotions)
             if self.__prediction_conf['model_format'].lower() == 'ir':
                 for key, probes in result.items():
                     ir_result = probes[0]
-                    self.__gui_output.draw_histogram(ir_result, image)
+                    self.__gui_output.draw_histogram(ir_result, image, self.__enabled_emotions)
         elif self.__is_video_input():
             if self.__prediction_conf['model_format'].lower() == 'h5':
                 self.__logger.logs(result[0])
