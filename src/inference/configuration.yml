@@ -1,0 +1,31 @@
+video:
+
+  prediction:
+    input_directory:
+    input_type: Camera # Video or Camera
+    frame_per_second: 6
+    is_rpi: False
+    model_type: 3d_CNN #CNN or 3d_CNN
+    model_format: IR #IR or h5
+    model_directory:
+    output_type: CMD # CMD, File or leave it empty to have both
+    log_directory_path:
+    camera:
+      # webcame and rpi respectively 1680, 640
+      CAP_PROP_FRAME_WIDTH: 640
+      # webcame and rpi respectively 1220, 480
+      CAP_PROP_FRAME_HEIGHT: 480
+    preprocessing:
+      face_detector: False
+      face_alignment: False
+      spatial_normalization: True
+    model_input_shape:
+      - channels: 1
+      - height: 32
+      - width: 32
+    gray_color: True
+    ir_run:
+      # "Required. Path to an .xml file with a trained model."
+      model:
+      cpu_extension: # path to a shared library with the kernels implementations
+      device: 'CPU' # target device to infer on (CPU, GPU or MYRIAD)

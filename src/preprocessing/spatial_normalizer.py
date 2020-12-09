@@ -1,39 +1,41 @@
 """
-Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved. 
+Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
 @Authors: Akram Shokri a.shokri@tue.nl
 @Contributors: Yusril Maulidan Raji y.m.raji@tue.nl
 @Last modified date: 02-12-2020
 """
 
-import os
 import math
+import os,sys
 import cv2
 import dlib
 import numpy as np
-from utility import Utility
-from ipreprocessing import IPreprocessing
-from frame_generator import FrameGenerator
+current_directory = os.getcwd()
+parent_directory = os.path.dirname(current_directory)
+grand_parent_directory = os.path.dirname(parent_directory)
+sys.path.insert(0, grand_parent_directory)
+from src.preprocessing.frame_generator import FrameGenerator
+from src.preprocessing.ipreprocessing import IPreprocessing
+from src.preprocessing.utility import Utility
 
 
 class SpatialNormalization(IPreprocessing):
     """
     This class is for extracting spatial normalization part of face from image(s)
     """
-    def __init__(self, rpi=False):
+    def __init__(self, ie=None, is_rpi=False):
         self.__detector = dlib.get_frontal_face_detector()
         self.__predictor = dlib.shape_predictor(
             "../../models/shape_predictor_68_face_landmarks.dat")
         self.__left_eye = np.array([36, 37, 38, 39, 40, 41])
         self.__right_eye = np.array([42, 43, 44, 45, 46, 47])
 
-        self.__is_rpi = rpi
+        self.__is_rpi = is_rpi
         if self.__is_rpi:
             # initialize openvino face detection lib
-            from openvino.inference_engine import IECore
-            ie = IECore()
             net_face = ie.read_network(model="../../models/face-detection-adas-0001.xml",
                                        weights="../../models/face-detection-adas-0001.bin")
-            self.__exec_net_face = ie.load_network(network=net_face, device_name="MYRIAD")
+            self.__exec_net_face = ie.load_network(network=net_face, device_name="CPU")
             self.__input_blob_face = next(iter(net_face.input_info))
             self.__output_blob_face = next(iter(net_face.outputs))
             n_face, c_face, self.__h_face, self.__w_face = net_face.input_info[self.__input_blob_face].input_data.shape
@@ -61,14 +63,10 @@ class SpatialNormalization(IPreprocessing):
         """
         spatial_normalized_frames = []
         for frame in frame_list:
-            # resize image to decrease spatial normalization execution time
-            img_height = frame.shape[0]
-            resize_percent = Utility.calculate_resize_percent(img_height)
-            if resize_percent < 1:
-                frame = Utility.resize_image(frame, resize_percent)
             # collect spatial normalized frame
-            spatial_normalized_frames.append(self.__do_spatial_normalization(frame))
-
+            sp_nrm_frame = self.get_frame(frame)
+            if sp_nrm_frame is not None:
+                spatial_normalized_frames.append(sp_nrm_frame)
         return spatial_normalized_frames
 
     def save_frames(self, frame_dict, output_path):
@@ -96,7 +94,20 @@ class SpatialNormalization(IPreprocessing):
                 cv2.imwrite(output_path + "/" + images_file_name[i].replace(".jpg", "") + "_spn.jpg",
                             normalized_frames[i])
 
-    def __do_spatial_normalization(self, image):
+    def get_frame(self, image):
+        """accepts a frame. It detects face in the frame and normalize it spatially.
+
+        Args:
+            image: a frame containing a human face
+
+        Returns:
+             a frame with spatially normalized face
+        """
+        # resize image to decrease spatial normalization execution time
+        img_height = image.shape[0]
+        resize_percent = Utility.calculate_resize_percent(img_height)
+        if resize_percent < 1:
+            image = Utility.resize_image(image, resize_percent)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         face_shape = None
         if self.__is_rpi:
@@ -109,10 +120,8 @@ class SpatialNormalization(IPreprocessing):
             if len(detections) > 0:
                 detected_face = detections[0]
                 face_shape = self.__predictor(gray, detected_face)
-
         if face_shape is not None:
             landmarks = self.__shape_to_np(face_shape)
-
             left_eye_center = np.mean(landmarks[self.__left_eye], axis=0)
             right_eye_center = np.mean(landmarks[self.__right_eye], axis=0)
             image, left_eye_center, right_eye_center = self.__do_alignment(image, left_eye_center, right_eye_center)
@@ -124,7 +133,8 @@ class SpatialNormalization(IPreprocessing):
             y = right_eye_center[1] - (inner_eyes * 1.3)
 
             image = image[int(y):int(y + h), int(x):int(x + w)]
-
+        else:
+            return None
         return image
 
     def __shape_to_np(self, shape, dtype="int"):

@@ -3,7 +3,7 @@ Copyright (c) 2020 TU/e -PDEng Software Technology c2019. All rights reserved.
 @Author: Vladimir Romashov v.romashov, Georgios Azis g.azis@tue.nl
 Description:
 This is a test frame generation module script that is able to test get_frame, get_frames,
-get_equal_frames, and save_frames methods.
+get_number_of_frames, and save_frames methods.
 
 Preprocessing.frame_generator module; os, shutil, yaml, numpy, and opencv2 libraries were
 used in this script.
@@ -47,30 +47,30 @@ def test_frame_generation_empty_input():
     assert len(frames_from_frame_generator) == 0
 
 
-def test_get_equal_frames_with_correct_input():
+def test_get_number_of_frames_with_correct_input():
     """
-    This method checks if the number of the returned frames in get_frames will be
+    This method checks if the number of the returned frames in get_number_of_frames will be
     equal to the predefined number_of_frames.
-    :return The test is complete if the get_equal_frames number of output frames is
+    :return The test is complete if the get_number_of_frames number of output frames is
     equal to the number_of_frames.
     """
     number_of_frames = 10
     video = cv2.VideoCapture(videos_path + 'video_with_face.mp4')
     frame_generator = __get_frame_generator_with_frame_per_second()
-    frames_from_frame_generator = frame_generator.get_frames(video, number_of_frames)
+    frames_from_frame_generator = frame_generator.get_number_of_frames(video, number_of_frames)
     assert len(frames_from_frame_generator) == number_of_frames
 
 
-def test_get_equal_frames_with_incorrect_input():
+def test_get_number_of_frames_with_incorrect_input():
     """
-    This method checks the behavior of get_frames with predefined number of frames
+    This method checks the behavior of get_number_of_frames with predefined number of frames
     for a nonexistent input video file.
-    :return The test is complete if the output of get_equal_frames is empty.
+    :return The test is complete if the output of get_number_of_frames is empty.
     """
     number_of_frames = 10
     video = cv2.VideoCapture(videos_path + 'invalid_file.mp4')
     frame_generator = __get_frame_generator_with_frame_per_second()
-    frames_from_frame_generator = frame_generator.get_frames(video, number_of_frames)
+    frames_from_frame_generator = frame_generator.get_number_of_frames(video, number_of_frames)
     empty_output = True
     for frame in frames_from_frame_generator:
         if frame is not None:
@@ -78,21 +78,21 @@ def test_get_equal_frames_with_incorrect_input():
     assert empty_output == True
 
 
-def test_get_equal_frames_with_empty_frames():
+def test_get_number_of_frames_with_empty_frames():
     """
-    This method checks the behaviour of get_frames with the number of frames
+    This method checks the behaviour of get_number_of_frames with the number of frames
     equal to zero.
-    :return The test is complete if the output of get_equal_frames is empty.
+    :return The test is complete if the output of get_number_of_frames is empty.
     """
     video = cv2.VideoCapture(videos_path + 'video_with_face.mp4')
     frame_generator = __get_frame_generator_with_frame_per_second()
-    frames_from_frame_generator = frame_generator.get_frames(video, 0)
+    frames_from_frame_generator = frame_generator.get_number_of_frames(video, 0)
     assert len(frames_from_frame_generator) == 0
 
 
-def test_get_equal_frames_with_negative_number_of_frames():
+def test_get_number_of_frames_with_negative_number_of_frames():
     """
-    This method checks the behaviour of get_frames with the negative number
+    This method checks the behaviour of get_number_of_frames with the negative number
     of frames.
     :return The test is complete if the error is raised.
     """
@@ -100,7 +100,7 @@ def test_get_equal_frames_with_negative_number_of_frames():
     frame_generator = __get_frame_generator_with_frame_per_second()
     raised = True
     try:
-        _ = frame_generator.get_frames(video, -1)
+        _ = frame_generator.get_number_of_frames(video, -1)
         raised = False
     except:
         pass
@@ -180,7 +180,7 @@ def __get_frame_generator_with_frame_per_second():
 
 
 def __load_configuration():
-    file_path = project_path + '/src/configuration.yml'
+    file_path = project_path + '/src/inference/configuration.yml'
     with open(file_path, 'r') as yamlfile:
         return yaml.load(yamlfile, Loader=yaml.FullLoader)
 

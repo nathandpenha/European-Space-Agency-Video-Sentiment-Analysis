@@ -1,5 +1,5 @@
 outs:
-- md5: 220f2339ad423131fb186ff84d5c99d8.dir
-  size: 25269954
-  nfiles: 24
+- md5: b3dd8a7c00310562485a27a6613125fa.dir
+  size: 32009913
+  nfiles: 65
   path: prod_data
