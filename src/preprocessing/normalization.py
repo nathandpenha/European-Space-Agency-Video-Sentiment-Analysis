@@ -36,13 +36,13 @@ class Normalization(IPreprocessing):
         """
         frames = []
         for face in frame_list:
-            if self.__gray_color:
-                face = cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
             face = self.get_frame(face)
             frames.append(face)
         return frames
 
     def get_frame(self, face):
+        if self.__gray_color:
+            face = cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
         revised_face_image = cv2.resize(face, (self.__image_size, self.__image_size))
         revised_face_image = np.array(revised_face_image)
         revised_face_image = revised_face_image / 255

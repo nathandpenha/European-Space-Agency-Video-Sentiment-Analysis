@@ -6,10 +6,11 @@ Copyright (c) 2020 TU/e - PDEng Software Technology C2019. All rights reserved.
 """
 
 import math
-import os,sys
+import os, sys
 import cv2
 import dlib
 import numpy as np
+
 current_directory = os.getcwd()
 parent_directory = os.path.dirname(current_directory)
 grand_parent_directory = os.path.dirname(parent_directory)
@@ -17,12 +18,14 @@ sys.path.insert(0, grand_parent_directory)
 from src.preprocessing.frame_generator import FrameGenerator
 from src.preprocessing.ipreprocessing import IPreprocessing
 from src.preprocessing.utility import Utility
+from src.inference.configuration_manager import ConfigurationManager
 
 
 class SpatialNormalization(IPreprocessing):
     """
     This class is for extracting spatial normalization part of face from image(s)
     """
+
     def __init__(self, ie=None, is_rpi=False):
         self.__detector = dlib.get_frontal_face_detector()
         self.__predictor = dlib.shape_predictor(
@@ -35,7 +38,8 @@ class SpatialNormalization(IPreprocessing):
             # initialize openvino face detection lib
             net_face = ie.read_network(model="../../models/face-detection-adas-0001.xml",
                                        weights="../../models/face-detection-adas-0001.bin")
-            self.__exec_net_face = ie.load_network(network=net_face, device_name="CPU")
+            __device = ConfigurationManager.get_configuration()['video']['prediction']['ir_run']['device']
+            self.__exec_net_face = ie.load_network(network=net_face, device_name=__device)
             self.__input_blob_face = next(iter(net_face.input_info))
             self.__output_blob_face = next(iter(net_face.outputs))
             n_face, c_face, self.__h_face, self.__w_face = net_face.input_info[self.__input_blob_face].input_data.shape
