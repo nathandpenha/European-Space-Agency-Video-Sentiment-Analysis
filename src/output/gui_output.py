@@ -52,16 +52,22 @@ class GUIOutput:
                           (150, num_enabled_emotions * 40 + 20),
                           (0, 0, 0), -1)
 
-            i = 0
+            filtered_emotions = []
+            filtered_colors = []
             for index, emotion in enumerate(self.__EMOTIONS):
                 if enabled_emotions[index]:
-                    # Draw histogram legend text
-                    cv2.putText(image, emotion, (10, i * 40 + 40), cv2.FONT_ITALIC, 0.75, self.__COLORS[index], 1)
-                    # Draw histogram bar
-                    cv2.rectangle(image, (160, i * 40 + 20),
-                                  (160 + int(prediction_result[index] * 100 * 1.5), (i + 1) * 40 + 4),
-                                  self.__COLORS[index], -1)
-                    i += 1
+                    filtered_emotions.append(emotion)
+                    filtered_colors.append(self.__COLORS[index])
+
+            i = 0
+            for index, emotion in enumerate(filtered_emotions):
+                # Draw histogram legend text
+                cv2.putText(image, emotion, (10, i * 40 + 40), cv2.FONT_ITALIC, 0.75, filtered_colors[index], 1)
+                # Draw histogram bar
+                cv2.rectangle(image, (160, i * 40 + 20),
+                              (160 + int(prediction_result[index] * 100 * 1.5), (i + 1) * 40 + 4),
+                              filtered_colors[index], -1)
+                i += 1
 
             cv2.imshow("Frame", image)
 

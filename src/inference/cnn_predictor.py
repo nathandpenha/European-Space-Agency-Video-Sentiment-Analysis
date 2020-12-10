@@ -47,11 +47,8 @@ class CNNPrediction:
         self.__face_detector = FaceDetector()
         self.__face_alignment = FaceAlignment()
         self.__normalizer = Normalization(self.__prediction_conf['gray_color'],
-                                          self.__prediction_conf['model_input_shape'][1]['height'])
-        emotions = self.__prediction_conf['emotion_map']
-        log_path = self.__prediction_conf['log_directory_path']
-        log_type = self.__prediction_conf['output_type']
-        self.__logger = Logger(emotions, log_path, log_type)
+                                          self.__prediction_conf['model_input_shape']['height'])
+        self.__logger = Logger()
         self.__gui_output = GUIOutput()
         self.load_model()
         if self.__prediction_conf['model_format'].lower() == 'h5':
@@ -161,9 +158,13 @@ class CNNPrediction:
         self.display_result(result, frame)
 
     def __image_reshape(self, image):
-        return image.reshape(1, self.__prediction_conf['model_input_shape'][1]['height'],
-                             self.__prediction_conf['model_input_shape'][2]['width'],
-                             self.__prediction_conf['model_input_shape'][0]['channels'])
+        reshaped_image = image.reshape(1, self.__prediction_conf['model_input_shape']['height'],
+                                self.__prediction_conf['model_input_shape']['width'],
+                                self.__prediction_conf['model_input_shape']['channels'])
+        if self.__prediction_conf['gray_color']:
+            reshaped_image = reshaped_image[:, :, :, 0]
+            reshaped_image = np.repeat(np.array(reshaped_image)[..., np.newaxis], 3, -1)
+        return reshaped_image
 
     def __optimized_model_caller(self, frame):
         if self.__is_video_input():
