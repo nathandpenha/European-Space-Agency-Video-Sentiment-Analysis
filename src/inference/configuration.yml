@@ -9,7 +9,7 @@ video:
     model_format: IR #IR or h5
     model_directory:
     output_type: CMD # CMD, File or leave it empty to have both
-    log_directory_path:
+    log_directory_path: 'D:\'
     camera:
       # webcame and rpi respectively 1680, 640
       CAP_PROP_FRAME_WIDTH: 640
@@ -29,3 +29,18 @@ video:
       model:
       cpu_extension: # path to a shared library with the kernels implementations
       device: 'CPU' # target device to infer on (CPU, GPU or MYRIAD)
+    emotion_toggle:
+      "01": True # neutral
+      "02": False # calm
+      "03": True # happy
+      "04": True # sad
+      "05": True # angry
+      "06": True # fearful
+      "07": False # disgusted
+      "08": False # surprised
+    emotion_map:
+      "01": "Neutral"
+      "02": "Happy"
+      "03": "Sad"
+      "04": "Angry"
+      "05": "Fearful"

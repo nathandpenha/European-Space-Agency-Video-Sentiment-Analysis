@@ -47,7 +47,10 @@ class ThreeDPrediction:
         self.__face_alignment = FaceAlignment()
         self.__normalizer = Normalization(self.__prediction_conf['gray_color'],
                                           self.__prediction_conf['model_input_shape'][1]['height'])
-        self.__logger = Logger()
+        emotions = self.__prediction_conf['emotion_map']
+        log_path = self.__prediction_conf['log_directory_path']
+        log_type = self.__prediction_conf['output_type']
+        self.__logger = Logger(emotions, log_path, log_type)
         self.__gui_output = GUIOutput()
         self.load_model()
         if self.__prediction_conf['model_format'].lower() == 'h5':
