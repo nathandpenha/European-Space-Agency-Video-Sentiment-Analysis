@@ -28,7 +28,7 @@ video:
       # "Required. Path to an .xml file with a trained model."
       model:
       cpu_extension: # path to a shared library with the kernels implementations
-      device: 'CPU' # target device to infer on (CPU, GPU or MYRIAD)
+      device: 'CPU' # target device to infer on (CPU or MYRIAD)
     emotion_toggle:
       "01": True # neutral
       "02": False # calm
