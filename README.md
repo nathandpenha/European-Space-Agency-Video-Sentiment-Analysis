@@ -1,70 +1,76 @@
+# STERN Video module
 
-## Video Sentiment Analysis
+STERN Video module repository contains the software, testing pipeline, and sub-modules such as preprocessing, training, and inference. 
 
-Repository for the Video sentiment analysis module of the ESA project.
+- [Preprocessing](#preprocessing) module extracts frames from video and preprocess the frames. 
+- [Training](#training) module provides an API to train the models on the extract features. 
+- [Inference](#inference) module analyses the emotion based on the frame(s). 
+- [Testing pipeline](#testing-pipeline) pipeline that assess the models and tests the other system modules such as the different preprocessing steps. 
 
-## Setup the project
+## Repository structure
 
-1. Clone/pull project
-* If it is from scratch, clone this project:
+- data: this directory is used for the original data related to the solution. Treat the data in this directory as immutable.
+- docs: contains the readme.md files and relevant images for documentation.
+- models: contains the video models such as ANNs that are used by the inference module.
+- src : contains the STERN video module and configuration files. 
+  - inference: contains script that is able to detect emotion from camera stream or input video.
+  - output: contains scripts that receive inference result as an input from inference module and show the result to the GUI of the live streaming or log the result into a json log file. 
+  - preprocessing: contains scripts that extract frames from video and perform data preprocessing steps.
+  - training: contains model building and optimization and model training scripts with configuration files. 
+- test: contains test scripts with configuration file.
+- requirements.txt: contains all the dependencies which need to be installed in order to run the STERN video software.
+
+## Requirements
+
+` pip ` is already installed with `Python` downloaded from [python.org](https://www.python.org/). 
+
+The software requires `Python3.7+`. 
+
+All the Python dependencies needed to run the software are listed in [requirements.txt](requirements.txt). 
+
+The following command installs the packages according to the requirements file. 
 ```
-git clone https://ooti-projects.win.tue.nl/gitlab/st-c2019/esa/video-sentimental-analysis.git
-```
-* if it is from existing project,  pull the project 
-```
-git pull
-```
+pip install -r requirements.txt 
+```   
 
-2. Follow the instructions to install DVC (on Windows): 
-* Linux: https://dvc.org/doc/install/linux
-* MacOS: https://dvc.org/doc/install/macos
-* Windows: https://dvc.org/doc/install/windows 
+**NOTE:** On the Raspberry Pi, `python2` and `python3` both are installed. 
 
-3. Follow the instructions to install aws cli version 2.
-* Linux: https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-linux.html
-* MacOS: https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-mac.html
-* Windows: https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-windows.html
+In order to prevent cluttering the Raspberry Pi's system libraries, a `Python Virtual Environment` is recommended. The following command is used to setup the environment. 
 
-4. Configure aws cli:
 ```
-> aws configure
-AWS Access Key ID [None]: AKIA55GEKVQR3FCPU7PV
-AWS Secret Access Key [None]: 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
-Default region name [None]: eu-central-1
-Default output format [None]: text
+pip install virtualenv
+
+virtualenv [name]
+```
+To activate the python virtual environment by running the following command:
+
+```
+source [name]/bin/activate
 ```
 
-5. Download production data and models:
+To deactivate the python virtual environment by running the following command:
+
 ```
-dvc pull
+deactivate
 ```
-## Use cases
 
-### Modify production data
-1. Add or remove audios from the ```prod_data``` directory.
-2. Execute ```dvc status``` to see that the contents of ```prod_data``` were modified.
-3. Execute ```dvc add prod_data``` to update the contents of ```prod_data.dvc```.
-4. Track changes with git: ```git add prod_data.dvc```.
-5. Git commit: ```git commit -m "commit message" ```.
-6. Update production: ```dvc push```.
-7. Push changes to GitLab: ```git push origin [branch-name]```.
+## Tutorials (Use cases)
 
-### Add new production model
-1. Add new model in the ```prod_models``` directory.
-2. Execute ```dvc status``` to see that the contents of ```prod_models``` were modified.
-3. Execute ```dvc add prod_models``` to update the contents of ```prod_models.dvc```.
-4. Track changes with git: ```git add prod_models.dvc```.
-5. Git commit: ```git commit -m "commit message" ```.
-6. Update production: ```dvc push```.
-7. Push changes to GitLab: ```git push origin [branch-name]```.
+### Preprocessing 
+Video preprocessing aims to process data and convert them to proper form for training and inference module. 
+There are four video preprocessing techniques, including frame generator, face detector, face alignment, spatial normalizer. 
+For more details on its usage, please read [preprocessing module](./docs/Preprocessing.md)
 
+### Training
+The model is trained and optimized with the preprocessed data by the training module. 
+The training phase includes three steps that are data preparation, model training, and model optimization. 
+Every step is configurable since each step has its configuration file with various parameters. 
+For more information about training the model, please read [training module](./docs/Training.md) 
 
-### Deploy new model in the raspberry pi
-1. Log into the raspberry pi.
-2. Go to **/home/pi/esaProject**.
-3. Activate virtual environment: ``` source videoTeam/bin/activate ```.
-4. Go to the repository directory```cd video-sentiment-analysis```.
-5. Pull changes from master ```git pull origin master```.
-6. Pull latest data and models using dvc ```dvc pull```.
-6. Go to the repository directory containing the source code.
-7. Run your script.
+### Inference
+Inference module can capture frame from camera stream or input video, and detect facial emotion. 
+It uses preprocessing module to prepare date and output module to display the results. 
+It is configurable with configuration yaml file. For more details on inference, please read [Inference module](./docs/Inference.md)
+
+### Testing pipeline
+[Testing pipeline](./docs/Testing.md)
