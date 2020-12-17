@@ -2,13 +2,14 @@
 FROM openvino/ubuntu18_dev:2020.4
 USER root
 WORKDIR /video-sentiment-analysis
-COPY data ./data/
 COPY docs ./docs/
-COPY models ./models/
 COPY src ./src/
 COPY tests ./tests/
 COPY README.md .
 COPY requirements.txt .
+
+# Create empty directories that serve as mountpoint for data and models
+RUN mkdir data && mkdir models
 
 # Set up the required dependencies
 RUN apt update \
